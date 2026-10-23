@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classifyActivity, isMoneyIn } from "./activities";
+import { cashThenNote, classifyActivity, ignoredSummary, isMoneyIn } from "./activities";
 
 describe("classifyActivity", () => {
   it("sorts SnapTrade activity types into money in and money out", () => {
@@ -24,5 +24,23 @@ describe("classifyActivity", () => {
     expect(isMoneyIn("dividend")).toBe(true);
     expect(isMoneyIn("purchase")).toBe(false);
     expect(isMoneyIn("fee")).toBe(false);
+  });
+});
+
+describe("notes about skipped activity", () => {
+  it("says nothing when nothing was skipped", () => {
+    expect(ignoredSummary(0)).toBeNull();
+  });
+
+  it("names the biggest skipped kinds in plain words", () => {
+    expect(ignoredSummary(11, { OPTIONEXPIRATION: 2, TRANSFER: 9 })).toBe("11 other items are not counted (9 transfer, 2 optionexpiration).");
+    expect(ignoredSummary(1, { SPLIT: 1 })).toBe("1 other item is not counted (1 split).");
+  });
+
+  it("calls the cash 30 days ago a rough guess when anything was skipped", () => {
+    expect(cashThenNote("$100.00", null)).toContain("Cash was about $100.00 30 days ago");
+    const guess = cashThenNote("$100.00", "2 other items are not counted.");
+    expect(guess).toContain("Rough guess");
+    expect(guess).toContain("Treat this as a guess");
   });
 });

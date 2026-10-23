@@ -1,3 +1,4 @@
+import { cashThenNote, ignoredSummary } from "./activities";
 import type { Bucket, PortfolioSnapshot } from "./types";
 import { bucketValues, cashByCurrency, hypotheticalAnnualEarnings, simulateBuyOnly } from "./portfolio";
 
@@ -20,8 +21,7 @@ export type ReportData = {
   moneyIn: { total: string; dividends: string; interest: string; deposits: string; sales: string };
   moneyOut: { total: string; purchases: string; withdrawals: string; fees: string };
   summary: string;
-  cashThen: string;
-  ignoredNote: string;
+  cashNote: string;
   example: string;
   groups: { group: string; now: string; target: string; after: string; buy: string }[];
   holdings: { symbol: string; name: string; group: string; value: string }[];
@@ -79,10 +79,7 @@ export function buildReportData(
       fees: pdfMoney(active.fees, currency),
     },
     summary: `In the last 30 days, ${pdfMoney(active.inflows30d, currency)} came in and ${pdfMoney(active.outflows30d, currency)} went out. Your cash ${active.net30d >= 0 ? "grew" : "shrank"} by ${pdfMoney(Math.abs(active.net30d), currency)}, to ${pdfMoney(active.currentCash, currency)} today.`,
-    cashThen: `Cash was about ${pdfMoney(active.cashThen, currency)} 30 days ago. That is an estimate from the activity SnapTrade lists.`,
-    ignoredNote: portfolio.ignoredActivities
-      ? `${portfolio.ignoredActivities} other ${portfolio.ignoredActivities === 1 ? "item" : "items"} (like transfers or options) ${portfolio.ignoredActivities === 1 ? "is" : "are"} not counted.`
-      : "Things SnapTrade does not list, like currency exchanges, are not counted.",
+    cashNote: cashThenNote(pdfMoney(active.cashThen, currency), ignoredSummary(portfolio.ignoredActivities ?? 0, portfolio.ignoredTypes)),
     example: `If this cash earned ${rate}% a year, that would be about ${pdfMoney(hypotheticalAnnualEarnings(active.currentCash, rate), currency)}. Just an example, not a prediction or advice.`,
     groups: rows.map((row) => ({
       group: GROUP_NAMES[row.bucket],
@@ -213,8 +210,7 @@ export async function renderReportPdf(data: ReportData): Promise<Uint8Array> {
     [["Total " + data.moneyOut.total.replace(/^[A-Z]{3} /, ""), data.moneyOut.purchases, data.moneyOut.withdrawals, data.moneyOut.fees]],
   );
   y -= 10;
-  paragraph(data.cashThen, 10, regular, muted);
-  paragraph(data.ignoredNote, 10, regular, muted);
+  paragraph(data.cashNote, 10, regular, muted);
   y -= 2;
   paragraph(data.example, 10, regular, muted);
 

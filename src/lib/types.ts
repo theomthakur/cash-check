@@ -45,6 +45,8 @@ export type PortfolioSnapshot = {
   activities: CashActivity[];
   /** Activities in the last 30 days of a kind we do not count (transfers, options and so on). */
   ignoredActivities?: number;
+  /** How many of those skipped activities there were of each SnapTrade type. */
+  ignoredTypes?: Record<string, number>;
 };
 
 export type CurrencySummary = {

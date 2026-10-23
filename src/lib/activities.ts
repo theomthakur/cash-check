@@ -33,3 +33,20 @@ export function classifyActivity(type: string): ActivityKind | null {
 }
 
 export const isMoneyIn = (kind: ActivityKind) => MONEY_IN.includes(kind);
+
+/** "11 other items are not counted (9 option expiration, 2 transfer)." or null when nothing was skipped. */
+export function ignoredSummary(count: number, types?: Record<string, number>): string | null {
+  if (!count) return null;
+  const parts = Object.entries(types ?? {})
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([type, n]) => `${n} ${type.toLowerCase().replace(/_/g, " ")}`);
+  return `${count} other ${count === 1 ? "item is" : "items are"} not counted${parts.length ? ` (${parts.join(", ")})` : ""}.`;
+}
+
+/** The sentence about cash 30 days ago. It is only a rough guess when some activity was skipped. */
+export function cashThenNote(thenMoney: string, ignored: string | null): string {
+  return ignored
+    ? `Rough guess: cash was about ${thenMoney} 30 days ago. ${ignored} Treat this as a guess.`
+    : `Cash was about ${thenMoney} 30 days ago. That is an estimate from the activity SnapTrade lists. Things it does not list, like currency exchanges, are not counted.`;
+}

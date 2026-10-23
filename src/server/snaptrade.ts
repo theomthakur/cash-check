@@ -147,11 +147,15 @@ export async function getPortfolioSnapshot(appUserId: string): Promise<Portfolio
       }];
     });
     let ignored = 0;
+    const ignoredTypes: Record<string, number> = {};
     const activities: CashActivity[] = activitiesResult.flatMap((entry, index) => {
       const activity = object(entry);
       const kind = classifyActivity(text(activity.type));
       const amount = Math.abs(number(activity.amount));
-      if (!kind) { if (amount > 0) ignored += 1; return []; }
+      if (!kind) {
+        if (amount > 0) { ignored += 1; const label = text(activity.type, "other").toUpperCase(); ignoredTypes[label] = (ignoredTypes[label] ?? 0) + 1; }
+        return [];
+      }
       if (amount === 0) return [];
       return [{
         id: text(activity.id, `${id}-activity-${index}`),
@@ -165,7 +169,7 @@ export async function getPortfolioSnapshot(appUserId: string): Promise<Portfolio
     });
     const freshness = text(object(positionsBody.data_freshness).as_of);
     if (freshness) account.lastSyncedAt = freshness;
-    return { account, holdings, activities, ignored };
+    return { account, holdings, activities, ignored, ignoredTypes };
   }));
 
   return {
@@ -175,5 +179,9 @@ export async function getPortfolioSnapshot(appUserId: string): Promise<Portfolio
     holdings: expanded.flatMap((item) => item.holdings),
     activities: expanded.flatMap((item) => item.activities),
     ignoredActivities: expanded.reduce((sum, item) => sum + item.ignored, 0),
+    ignoredTypes: expanded.reduce<Record<string, number>>((all, item) => {
+      for (const [type, n] of Object.entries(item.ignoredTypes)) all[type] = (all[type] ?? 0) + n;
+      return all;
+    }, {}),
   };
 }

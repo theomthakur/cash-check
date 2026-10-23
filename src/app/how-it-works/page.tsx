@@ -86,7 +86,7 @@ export default function HowItWorks() {
             <div className={styles.statusCard}>
               <h3>Checked</h3>
               <ul>
-                <li>30 automatic tests on the cash maths, the PDF summary, the locking and the sign-in</li>
+                <li>33 automatic tests on the cash maths, the PDF summary, the locking and the sign-in</li>
                 <li>A run on the live app with SnapTrade&apos;s sandbox test data, on 23 Oct 2026</li>
               </ul>
               <h3>Not yet</h3>

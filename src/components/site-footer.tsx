@@ -8,7 +8,7 @@ export default function SiteFooter() {
       <div className={styles.footerInner}>
         <div>
           <strong>Built by Om Thakur</strong>
-          <p>An independent project made for SnapTrade&apos;s Product Engineer exercise. Not made or endorsed by SnapTrade. Demo data is made up.</p>
+          <p>An independent project made for SnapTrade&apos;s Product Engineer exercise. Not made or endorsed by SnapTrade. The demo uses made-up data.</p>
           <p className={styles.footerSmall}>Read-only. Not investment advice. Balances and holdings are read when you open the app and are not saved.</p>
         </div>
         <nav aria-label="Links">
