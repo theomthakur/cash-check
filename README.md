@@ -94,4 +94,4 @@ The dashboard ends with "Was this useful?". A yes or no is saved with where it c
 
 ## Left out on purpose
 
-Trading, AI features, SEC filings, looking inside funds, currency conversion, a usage dashboard and a public status page. None of them help answer the first question: how much cash do I hold right now, and what could investing some of it look like?
+Trading, AI features, SEC filings, looking inside funds, currency conversion and a public status page. None of them help answer the first question: how much cash do I hold right now, and what could investing some of it look like?
