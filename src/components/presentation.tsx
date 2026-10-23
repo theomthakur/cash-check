@@ -24,7 +24,7 @@ const slides: { label: string; body: ReactNode }[] = [
     body: (
       <>
         <p className={styles.eyebrow}>The problem</p>
-        <h2>Your cash is spread across accounts—and easy to overlook.</h2>
+        <h2>Your cash is spread across accounts and easy to overlook.</h2>
         <p className={styles.big}>A dividend lands in one account and a deposit sits in another. To see the full picture, you have to open every brokerage and add it up yourself.</p>
       </>
     ),
@@ -50,7 +50,7 @@ const slides: { label: string; body: ReactNode }[] = [
           <div className={styles.slideNode}><b>You</b><small>Press Connect.</small></div>
           <div className={styles.slideNode}><div className={styles.chips} style={{ gap: 8 }}><img src={logo("nextjs")} alt="Next.js" /><img src={logo("vercel")} alt="Vercel" /></div><b>Cash Check</b><small>Sends you to sign in, then shows your cash.</small></div>
           <div className={styles.slideNode}><img src={logo("snaptrade")} alt="SnapTrade" /><b>SnapTrade</b><small>Connects your brokerage and returns read-only access.</small></div>
-          <div className={styles.slideNode}><img src={logo("neon")} alt="Neon" /><b>Neon</b><small>Stores the encrypted token—not your financial data.</small></div>
+          <div className={styles.slideNode}><img src={logo("neon")} alt="Neon" /><b>Neon</b><small>Stores the encrypted token, not your financial data.</small></div>
         </div>
         <p className={styles.big}>Cash Check never sees your password, and it forgets your numbers as soon as you leave.</p>
       </>

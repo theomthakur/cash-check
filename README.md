@@ -9,6 +9,15 @@ Cash Check shows the cash you hold across your brokerage accounts, in one place.
 
 This is an independent project made for SnapTrade's Product Engineer exercise. It is not made or endorsed by SnapTrade. The demo uses made-up data.
 
+## Start here
+
+You can review Cash Check in whichever format is most useful:
+
+1. [Try the live demo](https://cash-check-nine.vercel.app) - no account connection required.
+2. [Read the product brief](docs/Cash-Check-Product-Brief.pdf) - the problem, product choices, privacy boundary, and verification in three pages.
+3. [View the short presentation](docs/Cash-Check-Presentation.pdf) - a six-slide walkthrough of the product and tradeoffs.
+4. Read the sections below for implementation detail, local setup, and known limits.
+
 ## Why SnapTrade is needed
 
 1. **The problem.** People keep money at more than one brokerage. No single app shows all of the cash, so some of it can sit uninvested without anyone noticing.
