@@ -58,7 +58,7 @@ export default function HowItWorks() {
 
       <section className={styles.section} aria-labelledby="keep">
         <p className={styles.eyebrow}>Your privacy</p>
-        <h2 id="keep">What Cash Check saves—and what it never saves</h2>
+        <h2 id="keep">What Cash Check saves, and what it never saves</h2>
         <div className={styles.saved}>
           <div className={styles.savedYes}>
             <h3>Cash Check saves</h3>
@@ -83,7 +83,7 @@ export default function HowItWorks() {
           </div>
           <div>
             <p className={styles.eyebrow}>Honest status</p>
-            <h2 id="checked">What has been tested—and what has not</h2>
+            <h2 id="checked">What has been tested, and what has not</h2>
             <div className={styles.statusCard}>
               <h3>Checked</h3>
               <ul>

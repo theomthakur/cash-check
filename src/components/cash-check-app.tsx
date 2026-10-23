@@ -157,7 +157,7 @@ export default function CashCheckApp() {
         <div className={styles.steps}>
           <article><b>01</b><h2>See everything together</h2><p>View your cash by account and currency without jumping between brokerage apps.</p></article>
           <article><b>02</b><h2>Understand what changed</h2><p>See the money that came in and went out over the last 30 days, and how your cash balance changed.</p></article>
-          <article><b>03</b><h2>Explore a what-if</h2><p>See how investing some of your cash could change your mix. It is only a simulation—no order is ever placed.</p></article>
+          <article><b>03</b><h2>Explore a what-if</h2><p>See how investing some of your cash could change your mix. It is only a simulation, and no order is ever placed.</p></article>
         </div>
       </section>
       <section className={site.whyLight} aria-labelledby="why-snaptrade">

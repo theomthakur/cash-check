@@ -52,7 +52,7 @@ export default function Feedback({ source }: { source: "demo" | "live" }) {
       )}
       {stage === "note" && (
         <form onSubmit={(event) => { event.preventDefault(); void sendNote(); }}>
-          <p><b>Thanks—your answer is {saved === "yes" ? "saved" : "being saved"}.</b> What would make this more useful? Please don&apos;t include names or account numbers.</p>
+          <p><b>Thanks, your answer is {saved === "yes" ? "saved" : "being saved"}.</b> What would make this more useful? Please don&apos;t include names or account numbers.</p>
           <div>
             <input value={note} maxLength={280} onChange={(event) => setNote(event.target.value)} placeholder="A sentence is plenty" aria-label="Your note" />
             <button type="submit" disabled={sending || !note.trim()}>Send note</button>
