@@ -57,9 +57,16 @@ export default function CashCheckApp() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("auth") === "connected") void loadLivePortfolio();
+      const authResult = params.get("auth");
+      if (authResult) {
+        params.delete("auth");
+        params.delete("message");
+        const query = params.toString();
+        window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`);
+      }
+      if (authResult === "connected") void loadLivePortfolio();
       if (params.get("demo") === "1") { setPortfolio(demoPortfolio); setCurrency("USD"); setMode("dashboard"); }
-      if (params.get("auth") === "error") {
+      if (authResult === "error") {
         setMode("error");
         setErrorTitle("Connection not completed");
         setNotice(params.get("message") || "SnapTrade could not be connected.");
@@ -83,6 +90,7 @@ export default function CashCheckApp() {
 
   const cashRows = useMemo(() => portfolio ? cashByCurrency(portfolio) : [], [portfolio]);
   const activeCash = cashRows.find((row) => row.currency === currency);
+  const activeAccountCount = portfolio?.accounts.filter((account) => account.cash.some((cash) => cash.currency === currency)).length ?? 0;
   const values = useMemo(() => portfolio ? bucketValues(portfolio, currency) : { stocks: 0, bonds: 0, cash: 0, other: 0 }, [portfolio, currency]);
   const simulation = useMemo(() => simulateBuyOnly(values, targets), [values, targets]);
   const targetTotal = Object.values(targets).reduce((sum, value) => sum + value, 0);
@@ -139,8 +147,8 @@ export default function CashCheckApp() {
       {portfolio.accounts.some((account) => account.syncing) && <div className={styles.syncBanner}>One brokerage is still syncing. Figures may change when it finishes.</div>}
       {notice && <div className={styles.syncBanner}>{notice}</div>}
       <section className={styles.cashGrid}>
-        <article className={styles.cashCard}><p>CURRENT CASH · {currency}</p><strong>{money(activeCash.currentCash, currency)}</strong><span>Across {portfolio.accounts.filter((account) => account.cash.some((cash) => cash.currency === currency)).length} account(s)</span></article>
-        <article className={styles.inflowCard}><p>LAST 30 DAYS · AS OF {new Date(portfolio.asOf).toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</p><h2>You received <b>{money(activeCash.inflows30d, currency)}</b> in cash inflows over the last 30 days and currently hold <b>{money(activeCash.currentCash, currency)}</b> in cash.</h2><div className={styles.inflowBreakdown}><span>Dividends <b>{money(activeCash.dividends, currency)}</b></span><span>Interest <b>{money(activeCash.interest, currency)}</b></span><span>Contributions <b>{money(activeCash.contributions, currency)}</b></span></div></article>
+        <article className={styles.cashCard}><p>CURRENT CASH · {currency}</p><strong>{money(activeCash.currentCash, currency)}</strong><span>Across {activeAccountCount} {activeAccountCount === 1 ? "account" : "accounts"}</span></article>
+        <article className={styles.inflowCard}><p>LAST 30 DAYS · AS OF {new Date(portfolio.asOf).toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</p><h2>You received <b>{money(activeCash.inflows30d, currency)}</b>{" "}in cash inflows over the last 30 days and currently hold <b>{money(activeCash.currentCash, currency)}</b>{" "}in cash.</h2><div className={styles.inflowBreakdown}><span>Dividends <b>{money(activeCash.dividends, currency)}</b></span><span>Interest <b>{money(activeCash.interest, currency)}</b></span><span>Contributions <b>{money(activeCash.contributions, currency)}</b></span></div></article>
       </section>
       <section className={styles.costLine}><span aria-hidden="true">↗</span><p>If this cash earned <label><span className="sr-only">Annual hypothetical rate</span><input type="number" min="0" max="30" step="0.25" value={rate} onChange={(event) => setRate(Number(event.target.value))} /></label>% a year, that&apos;s about <b>{money(hypotheticalAnnualEarnings(activeCash.currentCash, rate), currency)}</b>.</p><small>Illustration only — not a forecast or recommendation.</small></section>
       <section className={styles.allocationSection}>
