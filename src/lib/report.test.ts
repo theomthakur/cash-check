@@ -22,7 +22,7 @@ describe("report data", () => {
     const data = buildReportData(demoPortfolio, "USD", targets, 4, now);
     expect(data.groups.map((group) => group.group)).toEqual(["Stocks", "Bonds", "Cash", "Other"]);
     expect(data.targetsAddUp).toBe(true);
-    expect(JSON.stringify(data)).not.toMatch(/[–—]/);
+    expect(JSON.stringify(data)).not.toMatch(/[\u2013\u2014]/);
   });
 
   it("flags targets that do not add up to 100", () => {
