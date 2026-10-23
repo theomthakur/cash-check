@@ -69,7 +69,7 @@ Make the encryption key with `openssl rand -base64 32` and each cookie secret wi
 ## Checks
 
 ```bash
-npm test          # 33 automatic tests
+npm test          # 34 automatic tests
 npm run lint
 npx tsc --noEmit
 npm run build

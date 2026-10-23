@@ -37,6 +37,15 @@ describe("notes about skipped activity", () => {
     expect(ignoredSummary(1, { SPLIT: 1 })).toBe("1 other item is not counted (1 split).");
   });
 
+  it("lists every skipped kind up to eight, then counts the rest", () => {
+    const types = Object.fromEntries(Array.from({ length: 10 }, (_, i) => [`KIND_${i}`, 10 - i]));
+    const text = ignoredSummary(55, types)!;
+    expect(text).toContain("10 kind 0");
+    expect(text).toContain("3 kind 7");
+    expect(text).not.toContain("kind 8");
+    expect(text).toContain("and 2 more kinds");
+  });
+
   it("calls the cash 30 days ago a rough guess when anything was skipped", () => {
     expect(cashThenNote("$100.00", null)).toContain("Cash was about $100.00 30 days ago");
     const guess = cashThenNote("$100.00", "2 other items are not counted.");

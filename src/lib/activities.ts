@@ -34,14 +34,14 @@ export function classifyActivity(type: string): ActivityKind | null {
 
 export const isMoneyIn = (kind: ActivityKind) => MONEY_IN.includes(kind);
 
-/** "11 other items are not counted (9 option expiration, 2 transfer)." or null when nothing was skipped. */
+/** "11 other items are not counted (9 transfer, 2 split)." or null when nothing was skipped. Lists every kind (up to 8). */
 export function ignoredSummary(count: number, types?: Record<string, number>): string | null {
   if (!count) return null;
-  const parts = Object.entries(types ?? {})
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 4)
-    .map(([type, n]) => `${n} ${type.toLowerCase().replace(/_/g, " ")}`);
-  return `${count} other ${count === 1 ? "item is" : "items are"} not counted${parts.length ? ` (${parts.join(", ")})` : ""}.`;
+  const sorted = Object.entries(types ?? {}).sort((a, b) => b[1] - a[1]);
+  const shown = sorted.slice(0, 8).map(([type, n]) => `${n} ${type.toLowerCase().replace(/_/g, " ")}`);
+  const more = sorted.length - 8;
+  if (more > 0) shown.push(`and ${more} more ${more === 1 ? "kind" : "kinds"}`);
+  return `${count} other ${count === 1 ? "item is" : "items are"} not counted${shown.length ? ` (${shown.join(", ")})` : ""}.`;
 }
 
 /** The sentence about cash 30 days ago. It is only a rough guess when some activity was skipped. */
