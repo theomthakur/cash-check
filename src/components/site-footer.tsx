@@ -12,7 +12,7 @@ export default function SiteFooter() {
           <p className={styles.footerSmall}>Read-only. Not investment advice. Balances and holdings are read when you open the app and are not saved.</p>
         </div>
         <nav aria-label="Links">
-          <Link href="/how-it-works">How it&apos;s built</Link>
+          <Link href="/how-it-works">How it works</Link>
           <Link href="/presentation">Presentation</Link>
           <a href={LINKS.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
           <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>

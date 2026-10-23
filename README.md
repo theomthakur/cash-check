@@ -21,6 +21,7 @@ This is an independent project made for SnapTrade's Product Engineer exercise. I
 - **Cash today**, by account and by currency. US and Canadian dollars are never added together.
 - **What came in** over the last 30 days: dividends, interest and deposits. These are shown next to the cash, as two separate facts. We cannot tell whether the money that came in is the money still in cash, so we do not say that.
 - **A simple example:** "If this cash earned 4% a year, that's about $X." The rate is yours to change. It is not a prediction.
+- **A PDF summary** you can download with one button: your cash, what came in, the what-if with your targets, and your holdings with the group you picked. It is made in your browser and never uploaded.
 - **A what-if:** how your mix of stocks, bonds, cash and other would change if you invested some of the cash. Nothing is sold and no order is placed.
 
 ## The parts
@@ -68,14 +69,14 @@ Make the encryption key with `openssl rand -base64 32` and each cookie secret wi
 ## Checks
 
 ```bash
-npm test          # 20 automatic tests
+npm test          # 25 automatic tests
 npm run lint
 npx tsc --noEmit
 npm run build
 npm audit
 ```
 
-The tests cover the cash math (totals, separate currencies, the buy-only what-if), encryption (round trip and tampering), the sign-in secret, and the refresh lease (waiting, rotating, expired access, other errors).
+The tests cover the cash math (totals, separate currencies, the buy-only what-if), the PDF summary, encryption (round trip and tampering), the sign-in secret, and the refresh lease (waiting, rotating, expired access, other errors).
 
 ## Honest limits
 

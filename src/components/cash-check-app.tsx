@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { demoPortfolio } from "@/lib/demo-data";
 import { bucketValues, cashByCurrency, hypotheticalAnnualEarnings, simulateBuyOnly } from "@/lib/portfolio";
+import { buildReportData, renderReportPdf, reportFileName } from "@/lib/report";
 import type { Bucket, PortfolioSnapshot } from "@/lib/types";
 import Link from "next/link";
 import SiteFooter from "./site-footer";
@@ -100,6 +101,25 @@ export default function CashCheckApp() {
   const simulation = useMemo(() => simulateBuyOnly(values, targets), [values, targets]);
   const targetTotal = Object.values(targets).reduce((sum, value) => sum + value, 0);
 
+  async function downloadPdf() {
+    if (!portfolio) return;
+    setNotice("Making your PDF…");
+    try {
+      const bytes = await renderReportPdf(buildReportData(portfolio, currency, targets, rate));
+      const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/pdf" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = reportFileName();
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setNotice(null);
+    } catch {
+      setNotice("We could not make the PDF. Please try again.");
+    }
+  }
+
   function changeHoldingBucket(holdingId: string, bucket: Bucket) {
     setPortfolio((current) => current ? { ...current, holdings: current.holdings.map((holding) => holding.id === holdingId ? { ...holding, bucket } : holding) } : current);
   }
@@ -143,7 +163,7 @@ export default function CashCheckApp() {
         <div className={site.whyGrid}>
           {WHY_SNAPTRADE.map((item, index) => <article key={item.title}><b>0{index + 1}</b><h3>{item.title}</h3><p>{item.body}</p></article>)}
         </div>
-        <Link className={site.more} href="/how-it-works">See how it&apos;s built, with a diagram ↗</Link>
+        <Link className={site.more} href="/how-it-works">See how it works, step by step ↗</Link>
       </section>
       <SiteFooter />
     </main>
@@ -160,7 +180,7 @@ export default function CashCheckApp() {
   return (
     <main className={styles.appShell}>
       <header className={styles.appHeader}><Logo /><div className={styles.headerActions}><span className={styles.sourceBadge}>{portfolio.source === "demo" ? "DEMO DATA" : "LIVE · SNAPTRADE"}</span><button className={styles.textButton} onClick={disconnect}>{portfolio.source === "demo" ? "Exit demo" : "Disconnect"}</button></div></header>
-      <section className={styles.dashboardIntro}><div><p className={styles.eyebrow}>YOUR CASH</p><h1>Here is the cash you hold today.</h1></div><div className={styles.currencySwitch} aria-label="Select currency">{cashRows.map((row) => <button key={row.currency} className={currency === row.currency ? styles.activeCurrency : ""} onClick={() => setCurrency(row.currency)}>{row.currency}</button>)}</div></section>
+      <section className={styles.dashboardIntro}><div><p className={styles.eyebrow}>YOUR CASH</p><h1>Here is the cash you hold today.</h1></div><div className={styles.introTools}><button className={styles.downloadButton} onClick={downloadPdf}>Download PDF summary <span aria-hidden="true">↓</span></button><div className={styles.currencySwitch} aria-label="Select currency">{cashRows.map((row) => <button key={row.currency} className={currency === row.currency ? styles.activeCurrency : ""} onClick={() => setCurrency(row.currency)}>{row.currency}</button>)}</div></div></section>
       {portfolio.accounts.some((account) => account.syncing) && <div className={styles.syncBanner}>One brokerage is still syncing. The numbers may change when it finishes.</div>}
       {notice && <div className={styles.syncBanner}>{notice}</div>}
       <section className={styles.cashGrid}>
