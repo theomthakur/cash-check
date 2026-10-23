@@ -7,20 +7,20 @@ export const LINKS = {
 /** Why this app needs SnapTrade. Shared by the home page, the system design page and the slides. */
 export const WHY_SNAPTRADE = [
   {
-    title: "The problem",
-    body: "Your money can be spread across a few brokerages. Nobody shows you all the cash in one place, so some of it can sit there doing nothing.",
+    title: "Your cash is scattered",
+    body: "When you use more than one brokerage, it is easy to lose track of how much cash is sitting in each account.",
   },
   {
-    title: "The hard part",
-    body: "Every brokerage works differently: its own login, its own rules, its own format. Connecting to all of them ourselves would take a whole company.",
+    title: "Every brokerage is different",
+    body: "Each one has its own login and its own way of returning data. Building and maintaining those connections ourselves would be a product on its own.",
   },
   {
-    title: "What SnapTrade does",
-    body: "That is SnapTrade's job. You sign in once, and it hands us your balances in one tidy format, from every brokerage it supports.",
+    title: "SnapTrade handles the connections",
+    body: "You connect through SnapTrade, and it gives Cash Check read-only data in one consistent format across the brokerages it supports.",
   },
   {
-    title: "Why that matters here",
-    body: "We never see your brokerage password, and we don't keep your numbers. Without SnapTrade, we could only show one brokerage, or you would have to type everything in.",
+    title: "Your login stays private",
+    body: "Cash Check never sees your brokerage password and never saves your balances. You get one useful view without typing everything in by hand.",
   },
 ];
 

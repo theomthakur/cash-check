@@ -6,7 +6,7 @@ import SiteFooter from "@/components/site-footer";
 import { getStats } from "@/server/db";
 import styles from "@/components/site.module.css";
 
-export const metadata: Metadata = { title: "How people use Cash Check", description: "Anonymous counts: demo opens, PDF downloads and feedback." };
+export const metadata: Metadata = { title: "How people use Cash Check", description: "A simple, anonymous look at how people use Cash Check." };
 
 async function load() {
   try {
@@ -40,8 +40,8 @@ export default function Stats() {
       </nav>
       <header className={styles.hero}>
         <p className={styles.eyebrow}>Usage</p>
-        <h1>How people use it.</h1>
-        <p className={styles.lead}>Plain counts, so decisions come from what people actually do. No names, no accounts and no money amounts are counted.</p>
+        <h1>Is Cash Check actually useful?</h1>
+        <p className={styles.lead}>These simple counts help answer that question. They never include names, account details, or money amounts.</p>
       </header>
       <section className={styles.section}>
         <Suspense fallback={<p className={styles.sectionLead}>Counting…</p>}><Counts /></Suspense>

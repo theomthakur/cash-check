@@ -15,7 +15,7 @@ const slides: { label: string; body: ReactNode }[] = [
       <>
         <p className={styles.eyebrow}>A short story</p>
         <h1>Where is all your cash?</h1>
-        <p className={styles.big}>Cash Check shows the cash you hold across all your brokerages, on one page. Made by Om Thakur for SnapTrade.</p>
+        <p className={styles.big}>Cash Check brings the cash across your brokerage accounts into one clear, read-only view. I built it for SnapTrade&apos;s Product Engineer exercise.</p>
       </>
     ),
   },
@@ -24,8 +24,8 @@ const slides: { label: string; body: ReactNode }[] = [
     body: (
       <>
         <p className={styles.eyebrow}>The problem</p>
-        <h2>You open three apps and still don&apos;t know.</h2>
-        <p className={styles.big}>An account here, another account there. A dividend lands in one, a deposit in the other. Nobody adds up the cash that is just sitting around, and some of it was meant to be invested.</p>
+        <h2>Your cash is spread across accounts—and easy to overlook.</h2>
+        <p className={styles.big}>A dividend lands in one account and a deposit sits in another. To see the full picture, you have to open every brokerage and add it up yourself.</p>
       </>
     ),
   },
@@ -35,7 +35,7 @@ const slides: { label: string; body: ReactNode }[] = [
       <>
         <p className={styles.eyebrow}>Why SnapTrade</p>
         <h2>Why not connect to the brokerages ourselves?</h2>
-        <p className={styles.big}>Every brokerage has its own login, its own rules and its own format. That is a lot of work for each one, and it changes all the time. SnapTrade already did that work. We sign in once, and we get everything in the same shape.</p>
+        <p className={styles.big}>Every brokerage has its own login, rules, and data format. SnapTrade handles those connections, so Cash Check can focus on turning the data into one useful view.</p>
         <div className={styles.chips}><span className={styles.chip}><img src="/logos/snaptrade-wordmark.svg" alt="SnapTrade" height={20} style={{ height: 20, width: "auto" }} /></span></div>
       </>
     ),
@@ -45,12 +45,12 @@ const slides: { label: string; body: ReactNode }[] = [
     body: (
       <>
         <p className={styles.eyebrow}>What happens when you connect</p>
-        <h2>Four players, one short trip.</h2>
+        <h2>Here&apos;s what happens when you connect.</h2>
         <div className={styles.slideDiagram}>
           <div className={styles.slideNode}><b>You</b><small>Press Connect.</small></div>
           <div className={styles.slideNode}><div className={styles.chips} style={{ gap: 8 }}><img src={logo("nextjs")} alt="Next.js" /><img src={logo("vercel")} alt="Vercel" /></div><b>Cash Check</b><small>Sends you to sign in, then shows your cash.</small></div>
-          <div className={styles.slideNode}><img src={logo("snaptrade")} alt="SnapTrade" /><b>SnapTrade</b><small>Logs you in to your brokerage and hands back a read-only pass.</small></div>
-          <div className={styles.slideNode}><img src={logo("neon")} alt="Neon" /><b>Neon</b><small>Keeps the pass locked. Nothing else.</small></div>
+          <div className={styles.slideNode}><img src={logo("snaptrade")} alt="SnapTrade" /><b>SnapTrade</b><small>Connects your brokerage and returns read-only access.</small></div>
+          <div className={styles.slideNode}><img src={logo("neon")} alt="Neon" /><b>Neon</b><small>Stores the encrypted token—not your financial data.</small></div>
         </div>
         <p className={styles.big}>Cash Check never sees your password, and it forgets your numbers as soon as you leave.</p>
       </>
@@ -77,7 +77,7 @@ const slides: { label: string; body: ReactNode }[] = [
     body: (
       <>
         <p className={styles.eyebrow}>Left out, and what is next</p>
-        <h2>It looks, it doesn&apos;t touch.</h2>
+        <h2>It helps you understand. It never trades.</h2>
         <ul className={styles.points}>
           <li><b>Left out on purpose:</b> trading, AI guesses and currency conversion.</li>
           <li><b>Checked:</b> 40 automatic tests, and a run with SnapTrade&apos;s sandbox test data.</li>

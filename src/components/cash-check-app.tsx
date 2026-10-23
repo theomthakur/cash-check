@@ -132,17 +132,17 @@ export default function CashCheckApp() {
 
   if (mode === "landing") return (
     <main>
-      <nav className={styles.nav}><Logo /><span className={styles.readOnly}>READ-ONLY BY DESIGN</span></nav>
+      <nav className={styles.nav}><Logo /><span className={styles.readOnly}>READ-ONLY, ALWAYS</span></nav>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>CASH ACROSS ALL YOUR BROKERAGES</p>
-          <h1>See the cash that isn&apos;t invested yet.</h1>
-          <p className={styles.heroLead}>One read-only view of your brokerage accounts. See how much cash you hold, what came in recently, and what it could look like if you invested some of it.</p>
+          <p className={styles.eyebrow}>ALL YOUR BROKERAGE CASH, ONE VIEW</p>
+          <h1>See how much cash is sitting across your brokerage accounts.</h1>
+          <p className={styles.heroLead}>Cash Check brings your brokerage cash together in one read-only view. See what you have today, what changed recently, and what investing some of it could look like.</p>
           <div className={styles.actions}>
-            <button className={styles.primaryButton} onClick={openDemo}>Explore the demo <span aria-hidden="true">↗</span></button>
-            <a className={styles.secondaryButton} href="/api/auth/snaptrade/start">Connect SnapTrade</a>
+            <button className={styles.primaryButton} onClick={openDemo}>Try it with sample data <span aria-hidden="true">↗</span></button>
+            <a className={styles.secondaryButton} href="/api/auth/snaptrade/start">Connect my accounts</a>
           </div>
-          <p className={styles.microcopy}>Read-only. Nothing is bought or sold. Your balances are not saved. Disconnect any time.</p>
+          <p className={styles.microcopy}>Cash Check can only read. It cannot buy, sell, or move your money. Your balances are never saved.</p>
         </div>
         <div className={styles.heroVisual} aria-label="Example cash overview">
           <div className={styles.ticketTop}><span>CASH CHECK / SAMPLE</span><span>23 OCT 2026</span></div>
@@ -153,23 +153,23 @@ export default function CashCheckApp() {
         </div>
       </section>
       <section className={styles.howItWorks}>
-        <p className={styles.eyebrow}>WHAT IT DOES AND DOESN&apos;T DO</p>
+        <p className={styles.eyebrow}>WHAT YOU CAN DO</p>
         <div className={styles.steps}>
-          <article><b>01</b><h2>See your cash</h2><p>Cash by account and by currency. Dollars and Canadian dollars are never added together.</p></article>
-          <article><b>02</b><h2>See what came in and went out</h2><p>Dividends, interest, deposits, purchases and fees from the last 30 days, and how much your cash changed.</p></article>
-          <article><b>03</b><h2>Try a what-if, not a trade</h2><p>See how investing some of the cash would change your mix. Cash Check never places an order.</p></article>
+          <article><b>01</b><h2>See everything together</h2><p>View your cash by account and currency without jumping between brokerage apps.</p></article>
+          <article><b>02</b><h2>Understand what changed</h2><p>See the money that came in and went out over the last 30 days, and how your cash balance changed.</p></article>
+          <article><b>03</b><h2>Explore a what-if</h2><p>See how investing some of your cash could change your mix. It is only a simulation—no order is ever placed.</p></article>
         </div>
       </section>
       <section className={site.whyLight} aria-labelledby="why-snaptrade">
         <p className={styles.eyebrow}>WHY SNAPTRADE</p>
         <div className={site.whyHead} style={{ marginBottom: 20 }}>
-          <h2 id="why-snaptrade" style={{ margin: 0, fontSize: "clamp(28px, 3.6vw, 46px)", letterSpacing: "-.045em", lineHeight: 1.02, maxWidth: 720 }}>Why this needs SnapTrade</h2>
+          <h2 id="why-snaptrade" style={{ margin: 0, fontSize: "clamp(28px, 3.6vw, 46px)", letterSpacing: "-.045em", lineHeight: 1.02, maxWidth: 720 }}>How your accounts connect safely</h2>
           <SnapTradeWordmark height={26} />
         </div>
         <div className={site.whyGrid}>
           {WHY_SNAPTRADE.map((item, index) => <article key={item.title}><b>0{index + 1}</b><h3>{item.title}</h3><p>{item.body}</p></article>)}
         </div>
-        <Link className={site.more} href="/how-it-works">See how it works, step by step ↗</Link>
+        <Link className={site.more} href="/how-it-works">See the full journey, step by step ↗</Link>
       </section>
       <SiteFooter />
     </main>
@@ -186,7 +186,7 @@ export default function CashCheckApp() {
   return (
     <main className={styles.appShell}>
       <header className={styles.appHeader}><Logo /><div className={styles.headerActions}><span className={styles.sourceBadge}>{portfolio.source === "demo" ? "DEMO DATA" : "LIVE · SNAPTRADE"}</span><button className={styles.textButton} onClick={disconnect}>{portfolio.source === "demo" ? "Exit demo" : "Disconnect"}</button></div></header>
-      <section className={styles.dashboardIntro}><div><p className={styles.eyebrow}>YOUR CASH</p><h1>Here is the cash you hold today.</h1></div><div className={styles.introTools}><button className={styles.downloadButton} onClick={downloadPdf}>Download PDF summary <span aria-hidden="true">↓</span></button><div className={styles.currencySwitch} aria-label="Select currency">{cashRows.map((row) => <button key={row.currency} className={currency === row.currency ? styles.activeCurrency : ""} onClick={() => setCurrency(row.currency)}>{row.currency}</button>)}</div></div></section>
+      <section className={styles.dashboardIntro}><div><p className={styles.eyebrow}>YOUR CASH TODAY</p><h1>Here&apos;s what&apos;s available right now.</h1></div><div className={styles.introTools}><button className={styles.downloadButton} onClick={downloadPdf}>Save a PDF summary <span aria-hidden="true">↓</span></button><div className={styles.currencySwitch} aria-label="Select currency">{cashRows.map((row) => <button key={row.currency} className={currency === row.currency ? styles.activeCurrency : ""} onClick={() => setCurrency(row.currency)}>{row.currency}</button>)}</div></div></section>
       {portfolio.accounts.some((account) => account.syncing) && <div className={styles.syncBanner}>One brokerage is still syncing. The numbers may change when it finishes.</div>}
       {notice && <div className={styles.syncBanner}>{notice}</div>}
       <section className={styles.cashGrid}>
@@ -195,18 +195,18 @@ export default function CashCheckApp() {
       </section>
       <section className={styles.costLine}><span aria-hidden="true">↗</span><p>If this cash earned <label><span className="sr-only">Annual hypothetical rate</span><input type="number" min="0" max="30" step="0.25" value={rate} onChange={(event) => setRate(Number(event.target.value))} /></label>% a year, that&apos;s about <b>{money(hypotheticalAnnualEarnings(activeCash.currentCash, rate), currency)}</b>.</p><small>Just an example. Not a prediction or advice.</small></section>
       <section className={styles.allocationSection}>
-        <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>A WHAT-IF</p><h2>What if you invested some of the cash?</h2></div><p>We use only as much cash as it takes to bring your smallest groups closer to your targets. Nothing is sold and no orders are placed.</p></div>
+        <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>TRY A WHAT-IF</p><h2>What could your mix look like after investing some cash?</h2></div><p>Set the mix you want to explore. Cash Check uses only your available cash and never sells anything or places an order.</p></div>
         <div className={styles.allocationCard}>
           <div className={styles.legendHeader}><span>Group</span><span>Now</span><span>Your target</span><span>After investing</span></div>
           {simulation.map((row) => <div className={styles.allocationRow} key={row.bucket}><div className={styles.bucketName}><i style={{ background: colors[row.bucket] }} />{labels[row.bucket]}{row.buyAmount > 0 && <small>+{money(row.buyAmount, currency)}</small>}</div><div><b>{row.currentPercent.toFixed(1)}%</b><div className={styles.track}><i style={{ width: `${Math.min(row.currentPercent, 100)}%`, background: colors[row.bucket] }} /></div></div><label className={styles.targetInput}><span className="sr-only">{labels[row.bucket]} target percentage</span><input type="number" min="0" max="100" value={targets[row.bucket]} onChange={(event) => setTargets((current) => ({ ...current, [row.bucket]: Number(event.target.value) }))} /><span>%</span></label><div><b>{row.simulatedPercent.toFixed(1)}%</b><div className={styles.track}><i style={{ width: `${Math.min(row.simulatedPercent, 100)}%`, background: colors[row.bucket] }} /></div></div></div>)}
           <div className={`${styles.targetTotal} ${targetTotal !== 100 ? styles.targetWarning : ""}`}>Your targets add up to {targetTotal}%{targetTotal !== 100 && ". They need to add up to 100%."}</div>
         </div>
         <div className={styles.holdingsEditor}>
-          <div><h3>Check each holding&apos;s group</h3><p>We only guess the obvious ones. Change any holding that looks wrong before you trust the what-if.</p></div>
+          <div><h3>Do these groups look right?</h3><p>We sort the obvious holdings for you. If something looks wrong, change it before using the what-if.</p></div>
           <div>{portfolio.holdings.filter((holding) => holding.currency === currency).map((holding) => <label key={holding.id}><span><b>{holding.symbol}</b>{holding.name}</span><select value={holding.bucket} onChange={(event) => changeHoldingBucket(holding.id, event.target.value as Bucket)}><option value="stocks">Stocks</option><option value="bonds">Bonds</option><option value="cash">Cash</option><option value="other">Other</option></select></label>)}</div>
         </div>
       </section>
-      <section className={styles.accountsSection}><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>ACCOUNTS</p><h2>Where the cash is</h2></div><p>Each currency is shown on its own. Cash Check never converts currencies.</p></div><div className={styles.accountList}>{portfolio.accounts.filter((account) => account.cash.some((cash) => cash.currency === currency)).map((account) => { const cash = account.cash.find((item) => item.currency === currency); return <article key={account.id} className={styles.accountRow}><div><h3>{account.name}</h3><p>{account.institution}</p></div><div><strong>{money(cash?.amount || 0, currency)}</strong><span>{account.syncing ? "Still syncing" : `Synced ${time(account.lastSyncedAt)}`}</span></div></article>; })}</div></section>
+      <section className={styles.accountsSection}><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>YOUR ACCOUNTS</p><h2>Here&apos;s where the cash is</h2></div><p>We keep each currency separate, so you never get a total based on a hidden exchange rate.</p></div><div className={styles.accountList}>{portfolio.accounts.filter((account) => account.cash.some((cash) => cash.currency === currency)).map((account) => { const cash = account.cash.find((item) => item.currency === currency); return <article key={account.id} className={styles.accountRow}><div><h3>{account.name}</h3><p>{account.institution}</p></div><div><strong>{money(cash?.amount || 0, currency)}</strong><span>{account.syncing ? "Still syncing" : `Synced ${time(account.lastSyncedAt)}`}</span></div></article>; })}</div></section>
       <Feedback source={portfolio.source === "demo" ? "demo" : "live"} />
       <SiteFooter />
     </main>

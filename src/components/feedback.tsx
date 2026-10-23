@@ -46,21 +46,21 @@ export default function Feedback({ source }: { source: "demo" | "live" }) {
     <section className={styles.feedback} aria-label="Feedback" aria-live="polite">
       {stage === "ask" && (
         <>
-          <p><b>Was this useful?</b> One click helps decide what to build next.</p>
+          <p><b>Did Cash Check help?</b> Your answer helps decide what to improve next.</p>
           <div><button type="button" onClick={() => vote(true)}>Yes</button><button type="button" onClick={() => vote(false)}>Not really</button></div>
         </>
       )}
       {stage === "note" && (
         <form onSubmit={(event) => { event.preventDefault(); void sendNote(); }}>
-          <p><b>Thanks, your answer is {saved === "yes" ? "saved" : "being saved"}.</b> Anything we should change? (optional, no names or account numbers please)</p>
+          <p><b>Thanks—your answer is {saved === "yes" ? "saved" : "being saved"}.</b> What would make this more useful? Please don&apos;t include names or account numbers.</p>
           <div>
-            <input value={note} maxLength={280} onChange={(event) => setNote(event.target.value)} placeholder="One line is plenty" aria-label="Your note" />
+            <input value={note} maxLength={280} onChange={(event) => setNote(event.target.value)} placeholder="A sentence is plenty" aria-label="Your note" />
             <button type="submit" disabled={sending || !note.trim()}>Send note</button>
             <button type="button" onClick={() => setStage("done")}>No thanks</button>
           </div>
         </form>
       )}
-      {stage === "done" && <p><b>Thank you.</b> Your answer is counted anonymously. You can see the counts on the <a href="/stats" style={{ textDecoration: "underline" }}>usage page</a>.</p>}
+      {stage === "done" && <p><b>Thank you.</b> Your answer is anonymous. See what others said on the <a href="/stats" style={{ textDecoration: "underline" }}>usage page</a>.</p>}
       {stage === "error" && (
         <>
           <p>We could not save that just now.</p>

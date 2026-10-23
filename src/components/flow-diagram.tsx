@@ -10,21 +10,21 @@ const ACTORS: { key: ActorKey; x: number; name: string; sub: string; logos: (typ
   { key: "you", x: 90, name: "You", sub: "in your browser", logos: [] },
   { key: "app", x: 290, name: "Cash Check", sub: "this app", logos: ["nextjs", "vercel"] },
   { key: "db", x: 500, name: "Neon", sub: "the database", logos: ["neon"] },
-  { key: "snaptrade", x: 705, name: "SnapTrade", sub: "does the sign-in", logos: ["snaptrade"] },
+  { key: "snaptrade", x: 705, name: "SnapTrade", sub: "connects your accounts", logos: ["snaptrade"] },
   { key: "brokerage", x: 910, name: "Your brokerage", sub: "where your money is", logos: [] },
 ];
 
 const X = Object.fromEntries(ACTORS.map((actor) => [actor.key, actor.x])) as Record<ActorKey, number>;
 
 const STEPS: { from: ActorKey; to: ActorKey; short: string; long: string }[] = [
-  { from: "you", to: "app", short: "I'd like to connect", long: "You press Connect on Cash Check." },
-  { from: "app", to: "snaptrade", short: "Please sign them in, read-only", long: "Cash Check hands you over to SnapTrade to sign in. It asks for permission to read, and nothing more." },
+  { from: "you", to: "app", short: "Connect my accounts", long: "You ask Cash Check to connect your brokerage accounts." },
+  { from: "app", to: "snaptrade", short: "Start a read-only connection", long: "Cash Check sends you to SnapTrade and asks only for permission to read your account data." },
   { from: "snaptrade", to: "brokerage", short: "You log in there", long: "At SnapTrade you log in to your brokerage. Cash Check never sees your password." },
-  { from: "snaptrade", to: "app", short: "Here is a read-only pass", long: "SnapTrade gives Cash Check a read-only pass." },
-  { from: "app", to: "db", short: "Keep the pass, locked", long: "Cash Check keeps that pass locked (encrypted) in its Neon database. That is the only thing it saves." },
-  { from: "app", to: "snaptrade", short: "Later: show me their cash", long: "Later, when you open your dashboard, Cash Check shows its pass to SnapTrade and asks for your cash." },
+  { from: "snaptrade", to: "app", short: "Return read-only access", long: "SnapTrade gives Cash Check a read-only connection token." },
+  { from: "app", to: "db", short: "Save the token securely", long: "Cash Check encrypts that token and stores it in Neon. It does not store your balances or holdings." },
+  { from: "app", to: "snaptrade", short: "Get the latest account data", long: "When you open the dashboard, Cash Check uses the token to ask SnapTrade for your latest data." },
   { from: "snaptrade", to: "app", short: "Balances, holdings, activity", long: "SnapTrade sends back your balances, holdings and recent activity." },
-  { from: "app", to: "you", short: "Your dashboard, not saved", long: "Cash Check shows them to you, then forgets them." },
+  { from: "app", to: "you", short: "Show it, then forget it", long: "Cash Check shows the data in your dashboard without saving it." },
 ];
 
 const TOP = 20;
