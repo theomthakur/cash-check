@@ -75,7 +75,7 @@ export default function CashCheckApp() {
         window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`);
       }
       if (authResult === "connected") void loadLivePortfolio();
-      if (params.get("demo") === "1") { setPortfolio(demoPortfolio); setCurrency("USD"); setMode("dashboard"); }
+      if (params.get("demo") === "1") { setPortfolio(demoPortfolio); setCurrency("USD"); setMode("dashboard"); track("demo_opened"); }
       if (authResult === "error") {
         setMode("error");
         setErrorTitle("Connection not completed");
