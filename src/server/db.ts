@@ -16,8 +16,16 @@ export type TokenRow = {
 let client: ReturnType<typeof postgres> | null = null;
 let schemaReady: Promise<void> | null = null;
 
+function isLocalDatabase(url: string): boolean {
+  try {
+    return ["localhost", "127.0.0.1", "::1"].includes(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
 function sql() {
-  if (!client) client = postgres(env().DATABASE_URL, { ssl: "require", max: 5 });
+  if (!client) client = postgres(env().DATABASE_URL, { ssl: isLocalDatabase(env().DATABASE_URL) ? false : "require", max: 5 });
   return client;
 }
 

@@ -1,6 +1,6 @@
 # SnapTrade API shapes used by Cash Check
 
-This document records the public contracts used by the app. It intentionally contains no credentials, account identifiers, or real portfolio values. A redacted “observed” example should be added after the first authorized test connection.
+This document records the public contracts used by the app. It intentionally contains no credentials, account identifiers, or portfolio values.
 
 ## Accounts
 
@@ -45,4 +45,11 @@ Cash Check includes positive `DIVIDEND`, `SUBSTITUTE_DIVIDEND`, `INTEREST`, and 
 
 ## Observed test-account differences
 
-Pending the first authorized connection. Before submission, record only structural differences here; never commit raw financial responses.
+Verified on October 23, 2026 with SnapTrade's `Self-directed` Sandbox scenario through the deployed OAuth flow. The app received and normalized:
+
+- two account records with display names, institution labels, and sync timestamps;
+- cash balances associated with a currency;
+- stock, fund, ETF, and cryptocurrency positions with nested instrument metadata; and
+- dividend, interest, and contribution activities within the requested date window.
+
+The normalizer accepts either a direct array or an object containing `results`/`data`, which covers the public contracts used by these endpoints. Cash-equivalent positions remain excluded to prevent double counting. No raw API body, account identifier, token, or portfolio value was retained for this note.

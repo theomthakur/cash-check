@@ -1,52 +1,61 @@
 # Cash Check
 
-Cash Check is a read-only dashboard for finding uninvested cash across brokerage accounts. It shows current cash separately by currency, adds context from the last 30 days of dividends, interest, and contributions, and lets the user explore a buy-only allocation without placing a trade.
+Cash Check shows the cash you hold across your brokerage accounts, in one place. It is read-only: it never buys, sells or moves anything.
 
-The first action is a fully functional demo. A real SnapTrade connection uses OAuth authorization code + PKCE and asks only for `openid read` access.
+- Live app: https://cash-check-nine.vercel.app
+- How it's built (system design): `/how-it-works`
+- Short presentation: `/presentation`
+- Built by Om Thakur: [Portfolio](https://theomthakur.github.io/portfolio), [LinkedIn](https://www.linkedin.com/in/theomthakur), [GitHub](https://github.com/theomthakur)
 
-## Why this exists
+This is an independent project made for SnapTrade's Product Engineer exercise. It is not made or endorsed by SnapTrade. The demo uses made-up data.
 
-Cash is easy to miss when it is spread across accounts. A single large number is not enough, though: recent inflows are not necessarily the same dollars that remain in cash, and USD and CAD should not be silently added together. The product therefore says exactly what it knows:
+## Why SnapTrade is needed
 
-> You received $X in cash inflows over the last 30 days and currently hold $Y in cash.
+1. **The problem.** People keep money at more than one brokerage. No single app shows all of the cash, so some of it can sit uninvested without anyone noticing.
+2. **The hard part.** Every brokerage has its own login, its own rules and its own data format. Connecting to each one, and keeping up when they change, is a whole company's job.
+3. **What SnapTrade does.** It is that company. One safe sign-in, one read-only connection, and balances, holdings and activity in the same shape from every brokerage it supports.
+4. **Why it fits here.** Cash Check never sees a brokerage password and never saves your balances. Without SnapTrade it could only show one brokerage, or ask you to type your numbers in by hand.
 
-It does not claim that a particular dividend or contribution is “still sitting,” convert currencies, recommend a security, or place an order.
+## What it shows
 
-## Product decisions
+- **Cash today**, by account and by currency. US and Canadian dollars are never added together.
+- **What came in** over the last 30 days: dividends, interest and deposits. These are shown next to the cash, as two separate facts. We cannot tell whether the money that came in is the money still in cash, so we do not say that.
+- **A simple example:** "If this cash earned 4% a year, that's about $X." The rate is yours to change. It is not a prediction.
+- **A what-if:** how your mix of stocks, bonds, cash and other would change if you invested some of the cash. Nothing is sold and no order is placed.
 
-- **Demo first:** reviewers can understand the product without sharing financial data.
-- **Read-only:** the app never requests the `trade` scope.
-- **Cash by currency:** no hidden FX assumptions.
-- **Buy-only simulation:** the calculation moves available cash toward underweight buckets while keeping the requested cash target. It never models a sale.
-- **Editable classifications:** obvious holdings are prefilled as Stocks, Bonds, Cash, or Other; the user can correct them.
-- **Visible assumptions:** the hypothetical annual rate is editable and labeled as an illustration.
+## The parts
 
-## Security boundary
-
-- OAuth uses a fresh state, nonce, and S256 PKCE challenge for every attempt.
-- The code exchange, token refresh, and revocation happen only on the server.
-- The ID token is verified against SnapTrade's issuer, audience, JWKS, expiry, and nonce.
-- Access and refresh tokens are encrypted with AES-256-GCM before they reach Postgres.
-- The browser receives a signed, httpOnly, same-site cookie containing only a random Cash Check user ID.
-- Balances, positions, and activities are fetched on demand with `Cache-Control: private, no-store`; Cash Check does not persist them.
-- Refresh tokens rotate. A 30-second database lease prevents two server requests from trying to use the same refresh token.
-- “Disconnect Cash Check” revokes the app's refresh token and deletes its local token row. It does **not** remove brokerage connections from SnapTrade.
-
-## Data flow
+| Part | What it does |
+|---|---|
+| Your browser | Shows the page. Holds a signed cookie with a random ID, and nothing else. |
+| Cash Check (Next.js on Vercel) | Handles sign-in, keeps the secrets, and asks SnapTrade for your data. |
+| SnapTrade | Does the brokerage sign-in and returns balances, holdings and activity in one format. |
+| Neon (Postgres) | Saves the encrypted sign-in tokens and a short refresh timer. Nothing about your money. |
 
 ```text
-Browser
-  → SnapTrade authorization page (PKCE + state + nonce)
-  → Cash Check callback (server-only code exchange)
-  → encrypted tokens in Neon Postgres
-  → read-scoped Bearer requests to SnapTrade
-  → normalized, non-cached portfolio response
-  → dashboard in the browser
+Browser  <->  Cash Check (Next.js, Vercel)  <->  SnapTrade  <->  your brokerages
+                          |
+                          v
+                   Neon Postgres
+              (encrypted tokens only)
 ```
 
-## Run locally
+## What is saved and what is not
 
-Requirements: Node 22 and a Postgres database.
+- **Saved:** your sign-in tokens (encrypted with AES-256-GCM), your SnapTrade user ID, when the token expires, and a 30-second timer while a refresh runs.
+- **Never saved:** brokerage passwords, balances, holdings, activity, or what you type into the what-if.
+
+## How sign-in stays safe
+
+- Read-only: the app asks for the `openid read` permissions and never asks to trade.
+- Every sign-in uses a fresh one-time secret (PKCE, S256), a state value and a nonce. The identity token is checked against SnapTrade's published keys.
+- Tokens are exchanged, refreshed and revoked on the server only.
+- SnapTrade replaces the refresh token each time it is used. A 30-second lease in the database means two requests cannot refresh at once.
+- "Disconnect" revokes access at SnapTrade and deletes our saved row. It does not remove your brokerage connections from SnapTrade.
+
+## Run it yourself
+
+You need Node 22 and a Postgres database (Neon works well; a local one works too).
 
 ```bash
 cp .env.example .env.local
@@ -54,37 +63,29 @@ npm install
 npm run dev
 ```
 
-Generate the encryption key with `openssl rand -base64 32`. Generate each cookie secret independently with `openssl rand -base64 48`. Do not commit `.env.local`.
+Make the encryption key with `openssl rand -base64 32` and each cookie secret with `openssl rand -base64 48`. Never commit `.env.local`. For local sign-in, register `http://localhost:3000/api/auth/snaptrade/callback` as the callback in SnapTrade. For a deployed app, set `APP_URL` to its HTTPS address and register the matching callback.
 
-The callback URL for local development is `http://localhost:3000/api/auth/snaptrade/callback`. For a deployed app, set `APP_URL` to its HTTPS origin and register the matching callback URL in SnapTrade.
-
-## Verification
+## Checks
 
 ```bash
-npm test
+npm test          # 20 automatic tests
 npm run lint
 npx tsc --noEmit
 npm run build
 npm audit
 ```
 
-The arithmetic tests cover cash totals, drift, buy-only allocation, and incomplete targets using hand-checked examples. They also confirm that different currencies remain separate.
+The tests cover the cash math (totals, separate currencies, the buy-only what-if), encryption (round trip and tampering), the sign-in secret, and the refresh lease (waiting, rotating, expired access, other errors).
 
-## Known limits
+## Honest limits
 
-- Real response shapes still need to be checked against one authorized test account; the normalizer is based on the current public API contract. See `docs/api-shapes.md`.
-- If SnapTrade rejects a rotated refresh token with `invalid_grant`, Cash Check deletes the unusable token row and asks the user to reconnect. It cannot recover a refresh token lost between SnapTrade's response and the database update.
-- Asset buckets are intentionally simple and do not look through funds into their underlying holdings.
-- The first version retrieves the first activity response for the requested 30-day period. Pagination should be added for accounts with unusually high activity volume.
-- Brokerage data freshness depends on the user's SnapTrade plan and institution.
+- Checked on the deployed app with SnapTrade's sandbox test data on 23 Oct 2026. See `docs/api-shapes.md`. Not yet checked with a real brokerage account.
+- Only the first page of the last 30 days of activity is read. Very busy accounts could be cut short.
+- A SnapTrade test app is limited to 5 users, so the demo is the main way to try it.
+- If SnapTrade answers a refresh but the answer is lost before we save it, you have to connect again.
+- Groups (stocks, bonds, cash, other) are simple. Funds are not looked into.
+- Cash Check is not investment advice.
 
-## Deliberately cut from v1
+## Left out on purpose
 
-Trading, LLM features, SEC filings, fund look-through, currency conversion, an analytics dashboard, and a public status page. They do not help answer the first product question: “How much cash do I hold right now, and what could a buy-only allocation look like?”
-
-## Next
-
-1. Connect one real account and record redacted response-shape notes.
-2. Confirm the five-user OAuth test limit is sufficient for reviewers.
-3. Add activity pagination and integration tests from sanitized fixtures.
-4. Add a small usefulness feedback control only after the real-data path is verified.
+Trading, AI features, SEC filings, looking inside funds, currency conversion, a usage dashboard and a public status page. None of them help answer the first question: how much cash do I hold right now, and what could investing some of it look like?

@@ -15,7 +15,7 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cash Check — See what isn't invested",
+  title: "Cash Check: see the cash that isn't invested",
   description: "A read-only view of cash across your brokerage accounts.",
 };
 

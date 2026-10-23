@@ -112,7 +112,7 @@ export async function getPortfolioSnapshot(appUserId: string): Promise<Portfolio
       const position = object(entry);
       if (position.cash_equivalent === true) return [];
       const instrument = object(position.instrument);
-      const symbol = text(instrument.symbol) || text(instrument.raw_symbol) || "—";
+      const symbol = text(instrument.symbol) || text(instrument.raw_symbol) || "Unknown";
       const description = text(instrument.description) || symbol;
       const value = number(position.units) * number(position.price);
       if (!value) return [];

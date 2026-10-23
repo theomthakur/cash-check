@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
     response.cookies.set(SESSION_COOKIE, signSession(appUserId), sessionCookieOptions);
     return response;
   } catch (error) {
-    return redirect(error instanceof Error ? error.message : "SnapTrade sign-in failed.");
+    console.error("SnapTrade OAuth callback failed", error instanceof Error ? { name: error.name, message: error.message } : { name: "UnknownError" });
+    return redirect("SnapTrade sign-in failed. Please try again.");
   }
 }

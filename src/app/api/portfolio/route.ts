@@ -10,6 +10,7 @@ export async function GET() {
     return NextResponse.json(await getPortfolioSnapshot(appUserId), { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     if (error instanceof ReconnectRequiredError) return NextResponse.json({ error: error.message }, { status: 401 });
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Portfolio data is unavailable." }, { status: 502 });
+    console.error("SnapTrade portfolio request failed", error instanceof Error ? { name: error.name, message: error.message } : { name: "UnknownError" });
+    return NextResponse.json({ error: "Portfolio data is temporarily unavailable. Please try again." }, { status: 502 });
   }
 }

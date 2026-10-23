@@ -7,12 +7,20 @@ import { clearSession, getSessionUserId } from "@/server/session";
 export async function POST() {
   const appUserId = await getSessionUserId();
   if (!appUserId) return NextResponse.json({ ok: true });
-  const row = await getTokens(appUserId);
+  let revoked = true;
   try {
+    const row = await getTokens(appUserId);
     if (row) await revokeRefreshToken(decryptToken(row.refresh_token_enc));
-  } finally {
-    await deleteTokens(appUserId);
-    await clearSession();
+  } catch (error) {
+    revoked = false;
+    console.error("Revoking access failed:", error instanceof Error ? error.name : "unknown");
   }
-  return NextResponse.json({ ok: true, detail: "Cash Check access was revoked. Your brokerage connections remain in SnapTrade." });
+  await deleteTokens(appUserId);
+  await clearSession();
+  return NextResponse.json({
+    ok: true,
+    detail: revoked
+      ? "Cash Check access was revoked. Your brokerage connections stay in SnapTrade."
+      : "Your Cash Check data was deleted, but SnapTrade could not be reached to revoke access. You can revoke it from your SnapTrade account.",
+  });
 }
