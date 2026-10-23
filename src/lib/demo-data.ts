@@ -19,6 +19,9 @@ export const demoPortfolio: PortfolioSnapshot = {
     { id: "a-dividend-vti", accountId: "demo-taxable", date: "2026-10-18T14:00:00.000Z", type: "dividend", amount: 186.42, currency: "USD", description: "VTI cash dividend" },
     { id: "a-interest", accountId: "demo-taxable", date: "2026-10-12T14:00:00.000Z", type: "interest", amount: 24.18, currency: "USD", description: "Cash interest" },
     { id: "a-contribution", accountId: "demo-ira", date: "2026-10-04T14:00:00.000Z", type: "contribution", amount: 1250, currency: "USD", description: "IRA contribution" },
+    { id: "a-withdrawal", accountId: "demo-taxable", date: "2026-10-08T14:00:00.000Z", type: "withdrawal", amount: 250, currency: "USD", description: "Transfer to checking" },
+    { id: "a-fee", accountId: "demo-taxable", date: "2026-10-14T14:00:00.000Z", type: "fee", amount: 4.95, currency: "USD", description: "Account fee" },
+    { id: "a-purchase-vxus", accountId: "demo-taxable", date: "2026-10-15T14:00:00.000Z", type: "purchase", amount: 900, currency: "USD", description: "Bought VXUS" },
     { id: "a-cad-dividend", accountId: "demo-international", date: "2026-10-09T14:00:00.000Z", type: "dividend", amount: 38.2, currency: "CAD", description: "SHOP.TO dividend" },
   ],
 };

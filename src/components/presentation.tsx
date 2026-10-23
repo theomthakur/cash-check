@@ -61,14 +61,14 @@ const slides: { label: string; body: ReactNode }[] = [
     body: (
       <>
         <p className={styles.eyebrow}>What you see</p>
-        <h2>Two honest facts and a what-if.</h2>
+        <h2>Your cash, what changed, and a what-if.</h2>
         <ul className={styles.points}>
           <li><b>What you hold today,</b> account by account. Each currency on its own.</li>
-          <li><b>What came in</b> over the last 30 days: dividends, interest and deposits.</li>
+          <li><b>What came in and went out</b> over the last 30 days, and how much your cash changed.</li>
           <li><b>A what-if:</b> how your mix would change if you invested some of the cash. Nothing is bought or sold.</li>
           <li><b>A PDF to keep:</b> one button turns what you see into a summary you can download or share.</li>
         </ul>
-        <p className={styles.big}>We can&apos;t tell if the money that came in is the money still sitting there, so we never say it is.</p>
+        <p className={styles.big}>Cash is one pool, so we never say a particular dividend is still sitting there. We show the change instead.</p>
       </>
     ),
   },
@@ -80,8 +80,8 @@ const slides: { label: string; body: ReactNode }[] = [
         <h2>It looks, it doesn&apos;t touch.</h2>
         <ul className={styles.points}>
           <li><b>Left out on purpose:</b> trading, AI guesses and currency conversion.</li>
-          <li><b>Checked:</b> 25 automatic tests, and a run with SnapTrade&apos;s sandbox test data.</li>
-          <li><b>Next:</b> try a real account, read busier accounts fully, and ask people if a weekly check is useful.</li>
+          <li><b>Checked:</b> 30 automatic tests, and a run with SnapTrade&apos;s sandbox test data.</li>
+          <li><b>Next:</b> try a real account, and ask people if a weekly check is useful.</li>
         </ul>
         <div className={styles.links}>
           <Link href="/">Try the demo</Link>

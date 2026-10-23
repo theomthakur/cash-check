@@ -1,4 +1,5 @@
 import "server-only";
+import { classifyActivity } from "@/lib/activities";
 import type { AccountSummary, Bucket, CashActivity, Holding, PortfolioSnapshot } from "@/lib/types";
 import { validAccessToken } from "./tokens";
 
@@ -70,12 +71,30 @@ function syncInfo(raw: JsonObject) {
   return { timestamp, syncing };
 }
 
-function activityKind(value: string): CashActivity["type"] | null {
-  const type = value.toUpperCase();
-  if (type === "DIVIDEND" || type === "SUBSTITUTE_DIVIDEND") return "dividend";
-  if (type === "INTEREST") return "interest";
-  if (type === "CONTRIBUTION") return "contribution";
-  return null;
+/**
+ * Reads the last 30 days of activity. The first request is the plain one; more pages are
+ * requested only when SnapTrade says there are more, and repeated rows are never added twice.
+ */
+async function fetchActivities(id: string, startDate: string, endDate: string, appUserId: string, accessToken: string): Promise<unknown[]> {
+  const base = `/accounts/${encodeURIComponent(id)}/activities?startDate=${startDate}&endDate=${endDate}`;
+  const first = await fetchJson(base, appUserId, accessToken);
+  const rows = [...array(first.body)];
+  const seen = new Set(rows.map((row) => text(object(row).id)).filter(Boolean));
+  const total = number(object(object(first.body).pagination).total);
+  let token = first.accessToken;
+  while (rows.length > 0 && total > rows.length && rows.length < 5000) {
+    const page = await fetchJson(`${base}&offset=${rows.length}&limit=1000`, appUserId, token);
+    token = page.accessToken;
+    const fresh = array(page.body).filter((row) => {
+      const rowId = text(object(row).id);
+      if (rowId && seen.has(rowId)) return false;
+      if (rowId) seen.add(rowId);
+      return true;
+    });
+    if (fresh.length === 0) break;
+    rows.push(...fresh);
+  }
+  return rows;
 }
 
 export async function getPortfolioSnapshot(appUserId: string): Promise<PortfolioSnapshot> {
@@ -93,7 +112,7 @@ export async function getPortfolioSnapshot(appUserId: string): Promise<Portfolio
     const [balancesResult, positionsResult, activitiesResult] = await Promise.all([
       fetchJson(`/accounts/${encodeURIComponent(id)}/balances`, appUserId, accessToken),
       fetchJson(`/accounts/${encodeURIComponent(id)}/positions/all`, appUserId, accessToken),
-      fetchJson(`/accounts/${encodeURIComponent(id)}/activities?startDate=${date(start)}&endDate=${date(end)}`, appUserId, accessToken),
+      fetchActivities(id, date(start), date(end), appUserId, accessToken),
     ]);
     const sync = syncInfo(raw);
     const account: AccountSummary = {
@@ -127,11 +146,13 @@ export async function getPortfolioSnapshot(appUserId: string): Promise<Portfolio
         bucket: bucketFor(kind, description),
       }];
     });
-    const activities: CashActivity[] = array(activitiesResult.body).flatMap((entry, index) => {
+    let ignored = 0;
+    const activities: CashActivity[] = activitiesResult.flatMap((entry, index) => {
       const activity = object(entry);
-      const kind = activityKind(text(activity.type));
-      const amount = number(activity.amount);
-      if (!kind || amount <= 0) return [];
+      const kind = classifyActivity(text(activity.type));
+      const amount = Math.abs(number(activity.amount));
+      if (!kind) { if (amount > 0) ignored += 1; return []; }
+      if (amount === 0) return [];
       return [{
         id: text(activity.id, `${id}-activity-${index}`),
         accountId: id,
@@ -144,7 +165,7 @@ export async function getPortfolioSnapshot(appUserId: string): Promise<Portfolio
     });
     const freshness = text(object(positionsBody.data_freshness).as_of);
     if (freshness) account.lastSyncedAt = freshness;
-    return { account, holdings, activities };
+    return { account, holdings, activities, ignored };
   }));
 
   return {
@@ -153,5 +174,6 @@ export async function getPortfolioSnapshot(appUserId: string): Promise<Portfolio
     accounts: expanded.map((item) => item.account),
     holdings: expanded.flatMap((item) => item.holdings),
     activities: expanded.flatMap((item) => item.activities),
+    ignoredActivities: expanded.reduce((sum, item) => sum + item.ignored, 0),
   };
 }

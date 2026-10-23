@@ -121,3 +121,14 @@
 
 }
 
+
+/* choices and status side by side */
+.twoCol { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: start; }
+.twoCol h2 { margin: 0 0 20px; font-size: clamp(26px, 3vw, 38px); }
+.statusCard { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--acid-strong); padding: 22px; }
+.statusCard h3 { margin: 18px 0 6px; font: 500 11px var(--font-mono), monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.statusCard h3:first-child { margin-top: 0; }
+.statusCard ul { margin: 0; padding-left: 18px; color: #43544f; font-size: 14px; line-height: 1.7; }
+.statusCard p { margin: 18px 0 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
+.statusCard a { text-decoration: underline; text-underline-offset: 3px; color: var(--ink); }
+@media (max-width: 960px) { .twoCol { grid-template-columns: 1fr; gap: 40px; } }

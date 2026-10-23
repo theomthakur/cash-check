@@ -8,3 +8,4 @@
 .cashCard,.inflowCard{min-width:0;overflow:hidden}.inflowCard h2{overflow-wrap:anywhere}.appShell{max-width:100vw;overflow-x:hidden}
 .inflowCard p.inflowNote{margin:14px 0 18px;font:400 14px/1.55 var(--font-sans),Arial,sans-serif;letter-spacing:0;text-transform:none;color:var(--muted)}
 .introTools{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end}.downloadButton{min-height:42px;padding:0 18px;border:1px solid var(--ink);background:var(--ink);color:var(--acid);font-weight:800;cursor:pointer}.downloadButton:hover{background:#0b1d1a}.downloadButton:focus-visible{outline:3px solid var(--acid-strong);outline-offset:2px}@media(max-width:600px){.introTools{justify-content:flex-start}}
+.flowLabel{font:500 10px var(--font-mono);letter-spacing:.08em;color:var(--muted);min-width:68px}.inflowBreakdown+.outRow{border-top:0;padding-top:10px;margin-top:-4px}.inflowBreakdown span.flowLabel{font-size:10px}

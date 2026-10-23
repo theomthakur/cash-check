@@ -1,3 +1,4 @@
+import { isMoneyIn } from "./activities";
 import type {
   AllocationRow,
   Bucket,
@@ -6,6 +7,16 @@ import type {
 } from "./types";
 
 const BUCKETS: Bucket[] = ["stocks", "bonds", "cash", "other"];
+
+const FIELD = {
+  dividend: "dividends",
+  interest: "interest",
+  contribution: "contributions",
+  sale: "sales",
+  purchase: "purchases",
+  withdrawal: "withdrawals",
+  fee: "fees",
+} as const;
 
 export function roundMoney(value: number): number {
   return Math.round((value + Number.EPSILON) * 100) / 100;
@@ -24,9 +35,16 @@ export function cashByCurrency(
       currency: code,
       currentCash: 0,
       inflows30d: 0,
+      outflows30d: 0,
+      net30d: 0,
+      cashThen: 0,
       dividends: 0,
       interest: 0,
       contributions: 0,
+      sales: 0,
+      purchases: 0,
+      withdrawals: 0,
+      fees: 0,
     };
     rows.set(code, created);
     return created;
@@ -42,22 +60,33 @@ export function cashByCurrency(
   cutoff.setUTCDate(cutoff.getUTCDate() - 30);
   for (const activity of snapshot.activities) {
     const date = new Date(activity.date);
-    if (date < cutoff || date > now || activity.amount <= 0) continue;
+    const amount = Math.abs(activity.amount);
+    if (date < cutoff || date > now || amount === 0) continue;
     const row = get(activity.currency);
-    row.inflows30d += activity.amount;
-    const field = activity.type === "dividend" ? "dividends" : activity.type === "contribution" ? "contributions" : "interest";
-    row[field] += activity.amount;
+    if (isMoneyIn(activity.type)) row.inflows30d += amount;
+    else row.outflows30d += amount;
+    row[FIELD[activity.type]] += amount;
   }
 
   return [...rows.values()]
-    .map((row) => ({
-      ...row,
-      currentCash: roundMoney(row.currentCash),
-      inflows30d: roundMoney(row.inflows30d),
-      dividends: roundMoney(row.dividends),
-      interest: roundMoney(row.interest),
-      contributions: roundMoney(row.contributions),
-    }))
+    .map((row) => {
+      const net = row.inflows30d - row.outflows30d;
+      return {
+        currency: row.currency,
+        currentCash: roundMoney(row.currentCash),
+        inflows30d: roundMoney(row.inflows30d),
+        outflows30d: roundMoney(row.outflows30d),
+        net30d: roundMoney(net),
+        cashThen: roundMoney(row.currentCash - net),
+        dividends: roundMoney(row.dividends),
+        interest: roundMoney(row.interest),
+        contributions: roundMoney(row.contributions),
+        sales: roundMoney(row.sales),
+        purchases: roundMoney(row.purchases),
+        withdrawals: roundMoney(row.withdrawals),
+        fees: roundMoney(row.fees),
+      };
+    })
     .sort((a, b) => a.currency.localeCompare(b.currency));
 }
 

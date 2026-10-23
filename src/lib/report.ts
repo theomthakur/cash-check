@@ -17,13 +17,16 @@ export type ReportData = {
   currency: string;
   accounts: { name: string; institution: string; cash: string; synced: string }[];
   cashToday: string;
-  cameIn: { total: string; dividends: string; interest: string; deposits: string };
-  twoFacts: string;
+  moneyIn: { total: string; dividends: string; interest: string; deposits: string; sales: string };
+  moneyOut: { total: string; purchases: string; withdrawals: string; fees: string };
+  summary: string;
+  cashThen: string;
+  ignoredNote: string;
   example: string;
   groups: { group: string; now: string; target: string; after: string; buy: string }[];
   holdings: { symbol: string; name: string; group: string; value: string }[];
   targetsAddUp: boolean;
-  otherCurrencies: { currency: string; cash: string; cameIn: string }[];
+  otherCurrencies: { currency: string; cash: string; change: string }[];
   notes: string[];
 };
 
@@ -41,7 +44,7 @@ export function buildReportData(
   now = new Date(),
 ): ReportData {
   const summaries = cashByCurrency(portfolio);
-  const active = summaries.find((row) => row.currency === currency) ?? { currency, currentCash: 0, inflows30d: 0, dividends: 0, interest: 0, contributions: 0 };
+  const active = summaries.find((row) => row.currency === currency) ?? { currency, currentCash: 0, inflows30d: 0, outflows30d: 0, net30d: 0, cashThen: 0, dividends: 0, interest: 0, contributions: 0, sales: 0, purchases: 0, withdrawals: 0, fees: 0 };
   const values = bucketValues(portfolio, currency);
   const rows = simulateBuyOnly(values, targets);
   const total = rows.reduce((sum, row) => sum + row.currentValue, 0);
@@ -62,13 +65,24 @@ export function buildReportData(
         synced: account.syncing ? "still syncing" : dateText(account.lastSyncedAt),
       })),
     cashToday: pdfMoney(active.currentCash, currency),
-    cameIn: {
+    moneyIn: {
       total: pdfMoney(active.inflows30d, currency),
       dividends: pdfMoney(active.dividends, currency),
       interest: pdfMoney(active.interest, currency),
       deposits: pdfMoney(active.contributions, currency),
+      sales: pdfMoney(active.sales, currency),
     },
-    twoFacts: `You received ${pdfMoney(active.inflows30d, currency)} in dividends, interest and deposits over the last 30 days. You hold ${pdfMoney(active.currentCash, currency)} in cash today. These are two separate facts: we cannot tell whether the money that came in is the same money that is still in cash.`,
+    moneyOut: {
+      total: pdfMoney(active.outflows30d, currency),
+      purchases: pdfMoney(active.purchases, currency),
+      withdrawals: pdfMoney(active.withdrawals, currency),
+      fees: pdfMoney(active.fees, currency),
+    },
+    summary: `In the last 30 days, ${pdfMoney(active.inflows30d, currency)} came in and ${pdfMoney(active.outflows30d, currency)} went out. Your cash ${active.net30d >= 0 ? "grew" : "shrank"} by ${pdfMoney(Math.abs(active.net30d), currency)}, to ${pdfMoney(active.currentCash, currency)} today.`,
+    cashThen: `Cash was about ${pdfMoney(active.cashThen, currency)} 30 days ago. That is an estimate from the activity SnapTrade lists.`,
+    ignoredNote: portfolio.ignoredActivities
+      ? `${portfolio.ignoredActivities} other ${portfolio.ignoredActivities === 1 ? "item" : "items"} (like transfers or options) ${portfolio.ignoredActivities === 1 ? "is" : "are"} not counted.`
+      : "Things SnapTrade does not list, like currency exchanges, are not counted.",
     example: `If this cash earned ${rate}% a year, that would be about ${pdfMoney(hypotheticalAnnualEarnings(active.currentCash, rate), currency)}. Just an example, not a prediction or advice.`,
     groups: rows.map((row) => ({
       group: GROUP_NAMES[row.bucket],
@@ -83,7 +97,7 @@ export function buildReportData(
     targetsAddUp: Math.abs(targetTotal - 100) <= 0.001,
     otherCurrencies: summaries
       .filter((row) => row.currency !== currency)
-      .map((row) => ({ currency: row.currency, cash: pdfMoney(row.currentCash, row.currency), cameIn: pdfMoney(row.inflows30d, row.currency) })),
+      .map((row) => ({ currency: row.currency, cash: pdfMoney(row.currentCash, row.currency), change: `${row.net30d >= 0 ? "up" : "down"} ${pdfMoney(Math.abs(row.net30d), row.currency)}` })),
     notes: [
       "Read-only snapshot. Cash Check does not buy, sell or move anything.",
       "The what-if only uses as much cash as it takes to bring your smallest groups closer to your targets. Nothing is sold.",
@@ -134,7 +148,7 @@ export async function renderReportPdf(data: ReportData): Promise<Uint8Array> {
     }
   };
   const heading = (text: string) => {
-    ensure(40);
+    ensure(84);
     y -= 14;
     page.drawText(text.toUpperCase(), { x: M, y: y - 9, size: 9, font: mono, color: muted });
     y -= 20;
@@ -186,13 +200,21 @@ export async function renderReportPdf(data: ReportData): Promise<Uint8Array> {
     data.accounts.map((account) => [account.name, account.institution, account.cash, account.synced]),
   );
 
-  heading("What came in over the last 30 days");
+  heading("Money in and out over the last 30 days");
+  paragraph(data.summary);
+  y -= 4;
   table(
-    [{ label: "Dividends", width: 129, right: true }, { label: "Interest", width: 129, right: true }, { label: "Deposits", width: 129, right: true }, { label: "Total", width: 111, right: true }],
-    [[data.cameIn.dividends, data.cameIn.interest, data.cameIn.deposits, data.cameIn.total]],
+    [{ label: "Came in", width: 102 }, { label: "Dividends", width: 102, right: true }, { label: "Interest", width: 96, right: true }, { label: "Deposits", width: 102, right: true }, { label: "Sales", width: 96, right: true }],
+    [["Total " + data.moneyIn.total.replace(/^[A-Z]{3} /, ""), data.moneyIn.dividends, data.moneyIn.interest, data.moneyIn.deposits, data.moneyIn.sales]],
+  );
+  y -= 8;
+  table(
+    [{ label: "Went out", width: 102 }, { label: "Purchases", width: 150, right: true }, { label: "Withdrawals", width: 150, right: true }, { label: "Fees and taxes", width: 96, right: true }],
+    [["Total " + data.moneyOut.total.replace(/^[A-Z]{3} /, ""), data.moneyOut.purchases, data.moneyOut.withdrawals, data.moneyOut.fees]],
   );
   y -= 10;
-  paragraph(data.twoFacts);
+  paragraph(data.cashThen, 10, regular, muted);
+  paragraph(data.ignoredNote, 10, regular, muted);
   y -= 2;
   paragraph(data.example, 10, regular, muted);
 
@@ -214,8 +236,8 @@ export async function renderReportPdf(data: ReportData): Promise<Uint8Array> {
   if (data.otherCurrencies.length) {
     heading("Other currencies (not converted)");
     table(
-      [{ label: "Currency", width: 100 }, { label: "Cash today", width: 224, right: true }, { label: "Came in, last 30 days", width: 144, right: true }],
-      data.otherCurrencies.map((row) => [row.currency, row.cash, row.cameIn]),
+      [{ label: "Currency", width: 100 }, { label: "Cash today", width: 224, right: true }, { label: "Change, last 30 days", width: 144, right: true }],
+      data.otherCurrencies.map((row) => [row.currency, row.cash, row.change]),
     );
   }
 

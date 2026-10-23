@@ -59,25 +59,44 @@ const snapshot: PortfolioSnapshot = {
 };
 
 describe("cashByCurrency", () => {
-  it("totals cash and recent inflows without converting currencies", () => {
+  const zero = { outflows30d: 0, net30d: 0, sales: 0, purchases: 0, withdrawals: 0, fees: 0 };
+
+  it("totals cash, money in and money out without converting currencies", () => {
     expect(cashByCurrency(snapshot)).toEqual([
-      {
-        currency: "CAD",
-        currentCash: 200,
-        inflows30d: 0,
-        dividends: 0,
-        interest: 0,
-        contributions: 0,
-      },
-      {
-        currency: "USD",
-        currentCash: 2000,
-        inflows30d: 542.5,
-        dividends: 42.5,
-        interest: 0,
-        contributions: 500,
-      },
+      { currency: "CAD", currentCash: 200, cashThen: 200, inflows30d: 0, dividends: 0, interest: 0, contributions: 0, ...zero },
+      { currency: "USD", currentCash: 2000, cashThen: 1457.5, inflows30d: 542.5, dividends: 42.5, interest: 0, contributions: 500, ...zero, net30d: 542.5 },
     ]);
+  });
+
+  it("subtracts money that went out and estimates the cash 30 days ago", () => {
+    const withOutflows: PortfolioSnapshot = {
+      ...snapshot,
+      activities: [
+        ...snapshot.activities,
+        { id: "b1", accountId: "a1", date: "2026-10-15T00:00:00.000Z", type: "purchase", amount: 300, currency: "USD", description: "Bought" },
+        { id: "w1", accountId: "a1", date: "2026-10-16T00:00:00.000Z", type: "withdrawal", amount: 100, currency: "USD", description: "Withdrawal" },
+        { id: "f1", accountId: "a1", date: "2026-10-17T00:00:00.000Z", type: "fee", amount: 4.5, currency: "USD", description: "Fee" },
+        { id: "s1", accountId: "a1", date: "2026-10-18T00:00:00.000Z", type: "sale", amount: 50, currency: "USD", description: "Sold" },
+      ],
+    };
+    const usd = cashByCurrency(withOutflows).find((row) => row.currency === "USD")!;
+    // In: 42.5 + 500 + 50 = 592.5. Out: 300 + 100 + 4.5 = 404.5. Net: 188.
+    expect(usd.inflows30d).toBe(592.5);
+    expect(usd.outflows30d).toBe(404.5);
+    expect(usd.net30d).toBe(188);
+    expect(usd.cashThen).toBe(1812);
+    expect(usd.purchases).toBe(300);
+    expect(usd.fees).toBe(4.5);
+  });
+
+  it("treats the amount as a size, so a purchase counts as money out however it is signed", () => {
+    const signed: PortfolioSnapshot = {
+      ...snapshot,
+      activities: [{ id: "b2", accountId: "a1", date: "2026-10-15T00:00:00.000Z", type: "purchase", amount: -300, currency: "USD", description: "Bought" }],
+    };
+    const usd = cashByCurrency(signed).find((row) => row.currency === "USD")!;
+    expect(usd.outflows30d).toBe(300);
+    expect(usd.inflows30d).toBe(0);
   });
 });
 

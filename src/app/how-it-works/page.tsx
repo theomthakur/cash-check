@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const CHOICES = [
   ["Look, don't touch.", "Cash Check can only read. It cannot buy, sell or move money, even if something goes wrong."],
-  ["Two facts, not one claim.", "We show what you hold today and what came in over the last 30 days, side by side. We can't know whether the money that came in is the money still sitting there, so we never say it is."],
+  ["Money in, money out, what changed.", "We add up what came in and what went out over 30 days, and show how your cash changed. We never claim one particular dividend is still sitting there, because cash is one pool."],
   ["Currencies stay apart.", "US and Canadian dollars are never added together. A hidden exchange rate would be a hidden guess."],
   ["You pick each holding's group.", "We guess the obvious ones (stocks, bonds, cash, other) and you fix the rest. We don't look inside funds."],
 ];
@@ -72,23 +72,37 @@ export default function HowItWorks() {
       </section>
 
       <section className={styles.section} aria-labelledby="choices">
-        <p className={styles.eyebrow}>A few choices</p>
-        <h2 id="choices">What we decided, and why</h2>
-        <ul className={styles.choices}>
-          {CHOICES.map(([title, body]) => <li key={title}><b>{title}</b> {body}</li>)}
-        </ul>
-      </section>
-
-      <section className={styles.section} aria-labelledby="checked">
-        <p className={styles.eyebrow}>Honest status</p>
-        <h2 id="checked">What is checked, and what isn&apos;t</h2>
-        <p className={styles.sectionLead}><b>Checked:</b> 25 automatic tests on the cash maths, the PDF summary, the locking and the sign-in, and a run on the live app with SnapTrade&apos;s sandbox test data on 23 Oct 2026. <b>Not yet:</b> a real brokerage account.</p>
-        <ul className={styles.limits}>
-          <li>Only the first page of the last 30 days of activity is read, so a very busy account could be cut short.</li>
-          <li>SnapTrade&apos;s test apps allow only 5 users, so most people will try the demo.</li>
-          <li>If SnapTrade&apos;s reply gets lost partway, you have to connect again.</li>
-        </ul>
-        <p className={styles.sectionLead} style={{ marginTop: 20 }}>The engineering details (how sign-in is secured, how tokens are locked, how refreshes are kept safe) are in the <a href={LINKS.github} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>README on GitHub</a>.</p>
+        <div className={styles.twoCol}>
+          <div>
+            <p className={styles.eyebrow}>A few choices</p>
+            <h2 id="choices">What we decided, and why</h2>
+            <ul className={styles.choices}>
+              {CHOICES.map(([title, body]) => <li key={title}><b>{title}</b> {body}</li>)}
+            </ul>
+          </div>
+          <div>
+            <p className={styles.eyebrow}>Honest status</p>
+            <h2 id="checked">What is checked, and what isn&apos;t</h2>
+            <div className={styles.statusCard}>
+              <h3>Checked</h3>
+              <ul>
+                <li>30 automatic tests on the cash maths, the PDF summary, the locking and the sign-in</li>
+                <li>A run on the live app with SnapTrade&apos;s sandbox test data, on 23 Oct 2026</li>
+              </ul>
+              <h3>Not yet</h3>
+              <ul>
+                <li>A real brokerage account</li>
+              </ul>
+              <h3>Good to know</h3>
+              <ul>
+                <li>Cash 30 days ago is an estimate. Things SnapTrade does not list, like transfers or currency exchanges, are not counted.</li>
+                <li>SnapTrade&apos;s test apps allow only 5 users, so most people will try the demo.</li>
+                <li>If SnapTrade&apos;s reply gets lost partway, you have to connect again.</li>
+              </ul>
+              <p>The engineering details (how sign-in is secured and how tokens are locked) are in the <a href={LINKS.github} target="_blank" rel="noopener noreferrer">README on GitHub</a>.</p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <SiteFooter />

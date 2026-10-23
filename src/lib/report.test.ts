@@ -11,10 +11,11 @@ describe("report data", () => {
     expect(pdfMoney(-5, "CAD")).toBe("CAD -5.00");
   });
 
-  it("says current cash and recent inflows are two separate facts", () => {
+  it("tells the story of money in, money out and the change in cash", () => {
     const data = buildReportData(demoPortfolio, "USD", targets, 4, now);
-    expect(data.twoFacts).toContain("two separate facts");
-    expect(data.twoFacts).toContain(data.cashToday);
+    expect(data.summary).toBe("In the last 30 days, USD 1,460.60 came in and USD 1,154.95 went out. Your cash grew by USD 305.65, to USD 15,745.80 today.");
+    expect(data.cashThen).toContain("USD 15,440.15");
+    expect(data.moneyOut.purchases).toBe("USD 900.00");
     expect(data.sourceLabel).toContain("Demo data");
   });
 
