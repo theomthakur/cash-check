@@ -8,7 +8,7 @@ export default function SiteFooter() {
       <div className={styles.footerInner}>
         <div>
           <strong>Built by Om Thakur</strong>
-          <p>I built Cash Check for SnapTrade&apos;s Product Engineer exercise. It is an independent project, not an official SnapTrade product. The demo uses sample data.</p>
+          <p>Cash Check is an independent project, not an official SnapTrade product. The demo uses sample data.</p>
           <p className={styles.footerSmall}>Cash Check is read-only and is not investment advice. It reads your balances and holdings when you open the app, then forgets them.</p>
         </div>
         <nav aria-label="Links">

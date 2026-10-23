@@ -15,7 +15,7 @@ const slides: { label: string; body: ReactNode }[] = [
       <>
         <p className={styles.eyebrow}>A short story</p>
         <h1>Where is all your cash?</h1>
-        <p className={styles.big}>Cash Check brings the cash across your brokerage accounts into one clear, read-only view. I built it for SnapTrade&apos;s Product Engineer exercise.</p>
+        <p className={styles.big}>Cash Check brings the cash across your brokerage accounts into one clear, read-only view. It is an independent project, not an official SnapTrade product.</p>
       </>
     ),
   },

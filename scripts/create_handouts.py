@@ -52,7 +52,7 @@ def footer(c, width, page):
     c.line(36, 30, width - 36, 30)
     c.setFillColor(MUTED)
     c.setFont("Helvetica", 8)
-    c.drawString(36, 16, "Cash Check | Independent SnapTrade Product Engineer exercise")
+    c.drawString(36, 16, "Cash Check | Independent project using SnapTrade")
     c.drawRightString(width - 36, 16, str(page))
 
 
@@ -107,7 +107,7 @@ def product_brief():
     c.drawString(60, 193, "Code and implementation notes: github.com/theomthakur/cash-check")
     c.setFillColor(MUTED)
     c.setFont("Helvetica", 9)
-    c.drawString(36, 116, "Built by Om Thakur for SnapTrade's Product Engineer exercise. The demo uses sample data.")
+    c.drawString(36, 116, "Built by Om Thakur. The demo uses sample data.")
     c.drawString(36, 96, "Cash Check is independent and is not an official SnapTrade product. Not investment advice.")
     footer(c, width, 1)
     c.showPage()
@@ -212,7 +212,7 @@ def presentation():
     c = canvas.Canvas(str(filename), pagesize=(width, height))
     c.setTitle("Cash Check presentation")
 
-    slide(c, "Where is all your cash?", "Cash Check", "A small, read-only app that brings cash across your brokerage accounts into one clear view. Built by Om Thakur for SnapTrade's Product Engineer exercise.", 1)
+    slide(c, "Where is all your cash?", "Cash Check", "A small, read-only app that brings cash across your brokerage accounts into one clear view. Built by Om Thakur as an independent project using SnapTrade.", 1)
     c.setFillColor(INK)
     c.roundRect(620, 170, 176, 200, 20, fill=1, stroke=0)
     c.setFillColor(LIME)

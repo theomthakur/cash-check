@@ -7,7 +7,7 @@ Cash Check shows the cash you hold across your brokerage accounts, in one place.
 - Short presentation: `/presentation`
 - Built by Om Thakur: [Portfolio](https://theomthakur.github.io/portfolio), [LinkedIn](https://www.linkedin.com/in/theomthakur), [GitHub](https://github.com/theomthakur)
 
-This is an independent project made for SnapTrade's Product Engineer exercise. It is not made or endorsed by SnapTrade. The demo uses made-up data.
+This is an independent project, not made or endorsed by SnapTrade. The demo uses made-up data.
 
 ## Start here
 
