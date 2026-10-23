@@ -44,6 +44,7 @@ Browser  <->  Cash Check (Next.js, Vercel)  <->  SnapTrade  <->  your brokerages
 ## What is saved and what is not
 
 - **Saved:** your sign-in tokens (encrypted with AES-256-GCM), your SnapTrade user ID, when the token expires, and a 30-second timer while a refresh runs.
+- **Also saved, anonymously:** counts of events (demo opened, account loaded, PDF downloaded) and the answers to "Was this useful?", with an optional one-line note. There are no names, accounts or money amounts in them. The counts are shown on `/stats`.
 - **Never saved:** brokerage passwords, balances, holdings, activity, or what you type into the what-if.
 
 ## How sign-in stays safe
@@ -69,7 +70,7 @@ Make the encryption key with `openssl rand -base64 32` and each cookie secret wi
 ## Checks
 
 ```bash
-npm test          # 34 automatic tests
+npm test          # 40 automatic tests
 npm run lint
 npx tsc --noEmit
 npm run build
@@ -77,6 +78,10 @@ npm audit
 ```
 
 The tests cover the cash math (totals, separate currencies, the buy-only what-if), the PDF summary, encryption (round trip and tampering), the sign-in secret, and the refresh lease (waiting, rotating, expired access, other errors).
+
+## Feedback and usage
+
+The dashboard ends with "Was this useful?". A yes or no is saved with where it came from (demo or connected), and a one-line note can be added to the same answer. Requests must come from the app's own address, notes are capped at 280 characters, and there is an hourly cap. `/stats` shows the plain counts so decisions come from what people do.
 
 ## Honest limits
 

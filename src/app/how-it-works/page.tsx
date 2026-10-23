@@ -62,7 +62,8 @@ export default function HowItWorks() {
         <div className={styles.saved}>
           <div className={styles.savedYes}>
             <h3>We keep</h3>
-            <ul><li>Your locked sign-in pass (encrypted)</li><li>Your SnapTrade user ID</li><li>When the pass runs out</li></ul>
+            <ul><li>Your locked sign-in pass (encrypted)</li><li>Your SnapTrade user ID</li><li>When the pass runs out</li>
+              <li>Anonymous counts (like how many times the demo was opened) and any feedback you choose to send</li></ul>
           </div>
           <div className={styles.savedNo}>
             <h3>We never keep</h3>
@@ -86,7 +87,7 @@ export default function HowItWorks() {
             <div className={styles.statusCard}>
               <h3>Checked</h3>
               <ul>
-                <li>34 automatic tests on the cash maths, the PDF summary, the locking and the sign-in</li>
+                <li>40 automatic tests on the cash maths, the PDF summary, the locking, the sign-in and the feedback checks</li>
                 <li>A run on the live app with SnapTrade&apos;s sandbox test data, on 23 Oct 2026</li>
               </ul>
               <h3>Not yet</h3>

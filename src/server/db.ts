@@ -15,6 +15,7 @@ export type TokenRow = {
 
 let client: ReturnType<typeof postgres> | null = null;
 let schemaReady: Promise<void> | null = null;
+let usageSchemaReady: Promise<void> | null = null;
 
 function isLocalDatabase(url: string): boolean {
   try {
@@ -27,6 +28,24 @@ function isLocalDatabase(url: string): boolean {
 function sql() {
   if (!client) client = postgres(env().DATABASE_URL, { ssl: isLocalDatabase(env().DATABASE_URL) ? false : "require", max: 5 });
   return client;
+}
+
+/** The usage tables live apart from the sign-in table, so a problem here can never affect sign-in. */
+async function ensureUsageSchema() {
+  if (!usageSchemaReady) usageSchemaReady = (async () => {
+    await sql()`CREATE TABLE IF NOT EXISTS usage_counts (event TEXT PRIMARY KEY, count BIGINT NOT NULL DEFAULT 0)`;
+    await sql()`
+      CREATE TABLE IF NOT EXISTS feedback (
+        id BIGSERIAL PRIMARY KEY,
+        token UUID NOT NULL DEFAULT gen_random_uuid(),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        source TEXT NOT NULL,
+        useful BOOLEAN NOT NULL,
+        note TEXT
+      )
+    `;
+  })().catch((error) => { usageSchemaReady = null; throw error; });
+  return usageSchemaReady;
 }
 
 async function ensureSchema() {
@@ -95,4 +114,40 @@ export async function releaseRefreshLease(appUserId: string) {
 export async function deleteTokens(appUserId: string) {
   await ensureSchema();
   await sql()`DELETE FROM oauth_tokens WHERE app_user_id=${appUserId}::uuid`;
+}
+
+/** Anonymous counters only: an event name and a number. No people, no money. */
+export async function recordEvent(event: string) {
+  await ensureUsageSchema();
+  await sql()`INSERT INTO usage_counts (event, count) VALUES (${event}, 1) ON CONFLICT (event) DO UPDATE SET count = usage_counts.count + 1`;
+}
+
+export async function saveFeedback(input: { source: string; useful: boolean; note: string | null }): Promise<string> {
+  await ensureUsageSchema();
+  const rows = await sql()<{ token: string }[]>`INSERT INTO feedback (source, useful, note) VALUES (${input.source}, ${input.useful}, ${input.note}) RETURNING token::text AS token`;
+  return rows[0].token;
+}
+
+/** Adds a note to an answer you just gave. Needs the private token from that answer, and only works once. */
+export async function addFeedbackNote(token: string, note: string): Promise<boolean> {
+  await ensureUsageSchema();
+  const rows = await sql()<{ id: string }[]>`UPDATE feedback SET note = ${note} WHERE token = ${token}::uuid AND note IS NULL RETURNING id::text AS id`;
+  return rows.length > 0;
+}
+
+export async function feedbackInLastHour(): Promise<number> {
+  await ensureUsageSchema();
+  const rows = await sql()<{ n: string }[]>`SELECT count(*)::text AS n FROM feedback WHERE created_at > now() - interval '1 hour'`;
+  return Number(rows[0]?.n ?? 0);
+}
+
+export async function getStats() {
+  await ensureUsageSchema();
+  const counts = await sql()<{ event: string; count: string }[]>`SELECT event, count::text FROM usage_counts`;
+  const votes = await sql()<{ useful: boolean; n: string }[]>`SELECT useful, count(*)::text AS n FROM feedback GROUP BY useful`;
+  return {
+    events: Object.fromEntries(counts.map((row) => [row.event, Number(row.count)])) as Record<string, number>,
+    useful: Number(votes.find((row) => row.useful)?.n ?? 0),
+    notUseful: Number(votes.find((row) => !row.useful)?.n ?? 0),
+  };
 }

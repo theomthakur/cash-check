@@ -14,6 +14,7 @@ export default function SiteFooter() {
         <nav aria-label="Links">
           <Link href="/how-it-works">How it works</Link>
           <Link href="/presentation">Presentation</Link>
+          <Link href="/stats">Usage</Link>
           <a href={LINKS.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
           <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
           <a href={LINKS.portfolio} target="_blank" rel="noopener noreferrer">Portfolio ↗</a>

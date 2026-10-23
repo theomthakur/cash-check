@@ -80,8 +80,8 @@ const slides: { label: string; body: ReactNode }[] = [
         <h2>It looks, it doesn&apos;t touch.</h2>
         <ul className={styles.points}>
           <li><b>Left out on purpose:</b> trading, AI guesses and currency conversion.</li>
-          <li><b>Checked:</b> 34 automatic tests, and a run with SnapTrade&apos;s sandbox test data.</li>
-          <li><b>Next:</b> try a real account, and ask people if a weekly check is useful.</li>
+          <li><b>Checked:</b> 40 automatic tests, and a run with SnapTrade&apos;s sandbox test data.</li>
+          <li><b>Next:</b> try a real account, and read the &ldquo;Was this useful?&rdquo; answers to decide what to build.</li>
         </ul>
         <div className={styles.links}>
           <Link href="/">Try the demo</Link>

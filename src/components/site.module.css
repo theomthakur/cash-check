@@ -132,3 +132,15 @@
 .statusCard p { margin: 18px 0 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
 .statusCard a { text-decoration: underline; text-underline-offset: 3px; color: var(--ink); }
 @media (max-width: 960px) { .twoCol { grid-template-columns: 1fr; gap: 40px; } }
+
+/* "Was this useful?" */
+.feedback { max-width: 1240px; margin: 56px auto 0; padding: 22px 32px; border: 1px solid var(--line); background: var(--surface); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.feedback p { margin: 0; font-size: 15px; color: #43544f; }
+.feedback b { color: var(--ink); }
+.feedback form { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; width: 100%; }
+.feedback div { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.feedback input { min-width: 280px; padding: 10px 12px; border: 1px solid var(--ink); background: #fff; }
+.feedback button { padding: 10px 16px; border: 1px solid var(--ink); background: var(--surface); font-weight: 700; cursor: pointer; }
+.feedback button:first-child, .feedback button[type="submit"] { background: var(--ink); color: var(--acid); }
+.feedback button:disabled { opacity: .4; cursor: default; }
+@media (max-width: 600px) { .feedback { margin: 40px 20px 0; padding: 18px; } .feedback input { min-width: 0; width: 100%; } }

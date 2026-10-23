@@ -7,7 +7,9 @@ import { cashThenNote, ignoredSummary } from "@/lib/activities";
 import { buildReportData, renderReportPdf, reportFileName } from "@/lib/report";
 import type { Bucket, PortfolioSnapshot } from "@/lib/types";
 import Link from "next/link";
+import Feedback from "./feedback";
 import SiteFooter from "./site-footer";
+import { track } from "@/lib/track";
 import { SnapTradeWordmark } from "./tech-logos";
 import { WHY_SNAPTRADE } from "@/lib/site";
 import styles from "./cash-check-app.module.css";
@@ -54,6 +56,7 @@ export default function CashCheckApp() {
       if (!response.ok) { setErrorTitle("SnapTrade returned an error"); throw new Error(body.error || "Portfolio data is unavailable."); }
       setPortfolio(body);
       setMode(body.accounts.length ? "dashboard" : "empty");
+      if (body.accounts.length) track("live_loaded");
     } catch (error) {
       setMode("error");
       if (error instanceof TypeError) setErrorTitle("Could not reach Cash Check");
@@ -84,6 +87,7 @@ export default function CashCheckApp() {
 
   function openDemo() {
     setMode("loading");
+    track("demo_opened");
     window.setTimeout(() => { setPortfolio(demoPortfolio); setCurrency("USD"); setMode("dashboard"); }, 450);
   }
 
@@ -116,6 +120,7 @@ export default function CashCheckApp() {
       link.remove();
       URL.revokeObjectURL(url);
       setNotice(null);
+      track("pdf_downloaded");
     } catch {
       setNotice("We could not make the PDF. Please try again.");
     }
@@ -202,6 +207,7 @@ export default function CashCheckApp() {
         </div>
       </section>
       <section className={styles.accountsSection}><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>ACCOUNTS</p><h2>Where the cash is</h2></div><p>Each currency is shown on its own. Cash Check never converts currencies.</p></div><div className={styles.accountList}>{portfolio.accounts.filter((account) => account.cash.some((cash) => cash.currency === currency)).map((account) => { const cash = account.cash.find((item) => item.currency === currency); return <article key={account.id} className={styles.accountRow}><div><h3>{account.name}</h3><p>{account.institution}</p></div><div><strong>{money(cash?.amount || 0, currency)}</strong><span>{account.syncing ? "Still syncing" : `Synced ${time(account.lastSyncedAt)}`}</span></div></article>; })}</div></section>
+      <Feedback source={portfolio.source === "demo" ? "demo" : "live"} />
       <SiteFooter />
     </main>
   );
