@@ -134,7 +134,7 @@
 @media (max-width: 960px) { .twoCol { grid-template-columns: 1fr; gap: 40px; } }
 
 /* "Was this useful?" */
-.feedback { max-width: 1240px; margin: 56px auto 0; padding: 22px 32px; border: 1px solid var(--line); background: var(--surface); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.feedback { max-width: 1176px; width: calc(100% - 64px); margin: 56px auto 0; padding: 22px 32px; border: 1px solid var(--line); background: var(--surface); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 .feedback p { margin: 0; font-size: 15px; color: #43544f; }
 .feedback b { color: var(--ink); }
 .feedback form { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; width: 100%; }
@@ -143,4 +143,4 @@
 .feedback button { padding: 10px 16px; border: 1px solid var(--ink); background: var(--surface); font-weight: 700; cursor: pointer; }
 .feedback button:first-child, .feedback button[type="submit"] { background: var(--ink); color: var(--acid); }
 .feedback button:disabled { opacity: .4; cursor: default; }
-@media (max-width: 600px) { .feedback { margin: 40px 20px 0; padding: 18px; } .feedback input { min-width: 0; width: 100%; } }
+@media (max-width: 600px) { .feedback { width: calc(100% - 40px); margin: 40px auto 0; padding: 18px; } .feedback input { min-width: 0; width: 100%; } }
